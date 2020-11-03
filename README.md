@@ -30,7 +30,7 @@ composer install yiisoft/cookies
 
 ## General usage
 
-Adding a cookie to reponse:
+Adding a cookie to response:
 
 ```php
 $cookie = (new \Yiisoft\Cookies\Cookie('cookieName', 'value'))
@@ -44,12 +44,18 @@ $cookie = (new \Yiisoft\Cookies\Cookie('cookieName', 'value'))
 $response = $cookie->addToResponse($response);
 ```
 
-Getting a cookie collection from response:
+Modifying response cookies to be sent:
 
 ```php
 $cookies = \Yiisoft\Cookies\CookieCollection::fromResponse($response);
 $cookies->expire('login');
 $response = $cookies->setToResponse($response);
+```
+
+Getting request cookies:
+
+```php
+$cookies = \Yiisoft\Cookies\CookieCollection::fromArray($request->getCookieParams());
 ```
 
 See [Yii guide to cookies](https://github.com/yiisoft/docs/blob/master/guide/en/runtime/cookies.md) for more info.

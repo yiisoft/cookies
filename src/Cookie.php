@@ -489,18 +489,22 @@ final class Cookie
 
         [$cookieName, $cookieValue] = self::splitCookieAttribute($rawAttribute);
 
+        /** @var array{name: string, value: string} $params */
         $params = [
             'name' => $cookieName,
             'value' => $cookieValue !== null ? urldecode($cookieValue) : '',
         ];
 
         while ($rawAttribute = array_shift($rawAttributes)) {
+            /** @var string $attributeKey */
             [$attributeKey, $attributeValue] = self::splitCookieAttribute($rawAttribute);
             $attributeKey = strtolower($attributeKey);
 
             if ($attributeValue === null && !in_array($attributeKey, ['secure', 'httponly'], true)) {
                 continue;
             }
+
+            /** @var string $attributeValue */
 
             switch ($attributeKey) {
                 case 'expires':
@@ -539,6 +543,9 @@ final class Cookie
         );
     }
 
+    /**
+     * @psalm-return non-empty-list<null|string>
+     */
     private static function splitCookieAttribute(string $attribute): array
     {
         $parts = explode('=', $attribute, 2);

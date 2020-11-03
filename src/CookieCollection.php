@@ -6,7 +6,6 @@ namespace Yiisoft\Cookies;
 
 use ArrayAccess;
 use ArrayIterator;
-use Closure;
 use Countable;
 use Exception;
 use InvalidArgumentException;
@@ -30,13 +29,14 @@ final class CookieCollection implements IteratorAggregate, ArrayAccess, Countabl
 
     /**
      * @var Cookie[] The cookies in this collection (indexed by the cookie name).
+     * @psalm-var array<string, Cookie>
      */
     private array $cookies = [];
 
     /**
      * CookieCollection constructor.
      *
-     * @param Cookie[] $cookies The cookies that this collection initially contains.
+     * @param Cookie[]|array $cookies The cookies that this collection initially contains.
      */
     public function __construct(array $cookies = [])
     {
@@ -93,9 +93,9 @@ final class CookieCollection implements IteratorAggregate, ArrayAccess, Countabl
      * This is equivalent to {@see get()}.
      *
      * @param string $name The cookie name.
-     * @return Cookie The cookie with the specified name, null if the named cookie does not exist.
+     * @return Cookie|null The cookie with the specified name, null if the named cookie does not exist.
      */
-    public function offsetGet($name): Cookie
+    public function offsetGet($name): ?Cookie
     {
         return $this->get($name);
     }
@@ -155,11 +155,11 @@ final class CookieCollection implements IteratorAggregate, ArrayAccess, Countabl
      * Returns the value of the named cookie.
      *
      * @param string $name The cookie name.
-     * @param mixed $defaultValue The value that should be returned when the named cookie does not exist.
+     * @param string|null $defaultValue The value that should be returned when the named cookie does not exist.
      * @return string|null The value of the named cookie or the default value if cookie is not set.
      * @see get()
      */
-    public function getValue(string $name, $defaultValue = null): ?string
+    public function getValue(string $name, ?string $defaultValue = null): ?string
     {
         return isset($this->cookies[$name]) ? $this->cookies[$name]->getValue() : $defaultValue;
     }
@@ -228,10 +228,11 @@ final class CookieCollection implements IteratorAggregate, ArrayAccess, Countabl
     /**
      * Tests for the existence of the cookie that satisfies the given predicate.
      *
-     * @param Closure $p The predicate.
+     * @param callable $p The predicate.
+     * @psalm-param callable(Cookie, string):bool $p
      * @return bool Whether the predicate is true for at least on cookie.
      */
-    public function exists(Closure $p): bool
+    public function exists(callable $p): bool
     {
         foreach ($this->cookies as $name => $cookie) {
             if ($p($cookie, $name)) {
@@ -258,14 +259,22 @@ final class CookieCollection implements IteratorAggregate, ArrayAccess, Countabl
 
     /**
      * Apply user supplied function to every cookie in the collection.
-     * If you want to modify the cookie in the collection, specify the first
-     * parameter of Closure as reference.
      *
-     * @param Closure $p
+     * Function signature is
+     *
+     * ```php
+     * function (Cookie $cookie, string $key): void
+     * ```
+     *
+     * If you want to modify the cookie in the collection, specify the first
+     * parameter of the callback as reference.
+     *
+     * @param callable $callback
+     * @psalm-param callable(Cookie, string):void $p
      */
-    public function walk(Closure $p): void
+    public function walk(callable $callback): void
     {
-        array_walk($this->cookies, $p);
+        array_walk($this->cookies, $callback);
     }
 
     /**
@@ -301,7 +310,7 @@ final class CookieCollection implements IteratorAggregate, ArrayAccess, Countabl
     /**
      * Populates the cookie collection from an array of 'name' => 'value' pairs.
      *
-     * @param array $array The cookies to populate from.
+     * @param array $array The cookies 'name' => 'value' array to populate from.
      * @return static Collection created from array.
      */
     public static function fromArray(array $array): self
@@ -312,10 +321,11 @@ final class CookieCollection implements IteratorAggregate, ArrayAccess, Countabl
 
         // Check if associative array with 'name' => 'value' pairs is passed.
         if (count(array_filter(array_keys($array), 'is_string')) !== count($array)) {
-            throw new InvalidArgumentException('Array in wrong format is passed.');
+            throw new InvalidArgumentException('Invalid array format. It must be "name" => "value" pairs.');
         }
 
-        return new self(array_map(static fn ($name, $value) => new Cookie($name, $value), array_keys($array), $array));
+        /** @psalm-var array<string,string> $array */
+        return new self(array_map(static fn (string $name, string $value) => new Cookie($name, $value), array_keys($array), $array));
     }
 
     /**
