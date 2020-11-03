@@ -95,6 +95,11 @@ final class CookieCollectionTest extends TestCase
         $this->assertEquals($cookie, $this->collection->get('test'));
     }
 
+    public function testGetNonExisting(): void
+    {
+        $this->assertEquals(null, $this->collection->get('test'));
+    }
+
     public function testGetValue(): void
     {
         $this->collection->add(new Cookie('test', 'testVal'));

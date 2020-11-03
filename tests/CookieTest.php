@@ -144,23 +144,49 @@ final class CookieTest extends TestCase
         $this->assertSame('test=42; Path=/; Secure; HttpOnly; SameSite=None', $this->getCookieHeader($cookie));
     }
 
-    public function testFromCookieString(): void
+    public function fromCookieStringDataProvider(): array
     {
-        $expireDate = new \DateTimeImmutable('+60 minutes');
-        $setCookieString = 'sessionId=e8bb43229de9; Domain=foo.example.com; '
-            . 'Expires=' . $expireDate->format(\DateTimeInterface::RFC7231) . '; '
-            . 'Max-Age=3600; WeirdKey; Path=/; Secure; HttpOnly; SameSite=Strict; ExtraKey';
+        $maxAgeDate = new \DateTimeImmutable('+60 minutes');
+        $expireDate = new \DateTimeImmutable('2012/12/7 10:00 UTC+0');
 
-        $cookie = new Cookie(
-            'sessionId',
-            'e8bb43229de9',
-            $expireDate,
-            'foo.example.com',
-            '/',
-            true,
-            true,
-            Cookie::SAME_SITE_STRICT
-        );
+        return [
+            [
+                'sessionId=e8bb43229de9; Domain=foo.example.com; '
+                . 'Expires=' . $maxAgeDate->format(\DateTimeInterface::RFC7231) . '; '
+                . 'Max-Age=3600; WeirdKey; Path=/test; Secure; HttpOnly; SameSite=Strict; ExtraKey',
+                new Cookie(
+                    'sessionId',
+                    'e8bb43229de9',
+                    $maxAgeDate,
+                    'foo.example.com',
+                    '/test',
+                    true,
+                    true,
+                    Cookie::SAME_SITE_STRICT
+                )
+            ],
+            [
+                'sessionId=e8bb43229de9; Domain=foo.example.com; '
+                . 'Expires=' . $expireDate->format(\DateTimeInterface::RFC7231) . '; ',
+                new Cookie(
+                    'sessionId',
+                    'e8bb43229de9',
+                    $expireDate,
+                    'foo.example.com',
+                    null,
+                    false,
+                    false,
+                    null
+                )
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider fromCookieStringDataProvider
+     */
+    public function testFromCookieString(string $setCookieString, Cookie $cookie): void
+    {
         $cookie2 = Cookie::fromCookieString($setCookieString);
         $this->assertSame((string)$cookie, (string)$cookie2);
     }
