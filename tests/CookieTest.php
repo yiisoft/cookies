@@ -215,7 +215,7 @@ final class CookieTest extends TestCase
 
         $this->assertNotEquals(2000, $original->getExpires()->format('Y'));
         $this->assertNotSame($original, $withExpires);
-        $this->assertNotEquals(2000, $original->getExpires()->format('Y'));
+        $this->assertNotEquals(2000, $withExpires->getExpires()->format('Y'));
 
         $this->assertNotSame($original, $original->withDomain('test'));
         $this->assertNotSame($original, $original->withHttpOnly(true));
