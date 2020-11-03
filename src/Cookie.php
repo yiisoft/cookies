@@ -28,7 +28,7 @@ final class Cookie
 {
 
     /**
-     * Regular Expression used to validate cookie name
+     * Regular Expression used to validate cookie name.
      * @link https://tools.ietf.org/html/rfc6265#section-4.1.1
      * @link https://tools.ietf.org/html/rfc2616#section-2.2
      */
@@ -61,14 +61,14 @@ final class Cookie
     public const SAME_SITE_NONE = 'None';
 
     /**
-     * @var string name of the cookie.
+     * @var string Name of the cookie.
      * A cookie name can be any US-ASCII characters, except control characters, spaces, or tabs.
      * It also must not contain a separator character like the following: ( ) < > @ , ; : \ " / [ ] ? = { }
      */
     private string $name;
 
     /**
-     * @var string value of the cookie.
+     * @var string Value of the cookie.
      */
     private string $value;
 
@@ -82,7 +82,7 @@ final class Cookie
     private ?DateTimeInterface $expires = null;
 
     /**
-     * @var string|null host/domain to which the cookie will be sent.
+     * @var string|null Host/domain to which the cookie will be sent.
      * If omitted, client will default to the host of the current URL, not including subdomains.
      * Multiple host/domain values are not allowed, but if a domain is specified,
      * then subdomains are always included.
@@ -90,44 +90,44 @@ final class Cookie
     private ?string $domain = null;
 
     /**
-     * @var string|null the path on the server in which the cookie will be available on.
-     * A cookie path can include any US-ASCII characters excluding control characters and semicolon
+     * @var string|null The path on the server in which the cookie will be available on.
+     * A cookie path can include any US-ASCII characters excluding control characters and semicolon.
      */
     private ?string $path = null;
 
     /**
-     * @var bool|null whether cookie should be sent via secure connection.
+     * @var bool|null Whether cookie should be sent via secure connection.
      * A secure cookie is only sent to the server when a request is made with the https: scheme.
      */
     private ?bool $secure = null;
 
     /**
-     * @var bool|null whether the cookie should be accessible only through the HTTP protocol.
+     * @var bool|null Whether the cookie should be accessible only through the HTTP protocol.
      * By setting this property to true, the cookie will not be accessible by scripting languages,
      * such as JavaScript, which can effectively help to mitigate attacks against cross-site scripting (XSS).
      */
     private ?bool $httpOnly = null;
 
     /**
-     * @var string|null asserts that a cookie must not be sent with cross-origin requests.
-     * This provides some protection against cross-site request forgery attacks (CSRF)
-     * @see https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html#samesite-cookie-attribute for more information about sameSite.
+     * @var string|null Asserts that a cookie must not be sent with cross-origin requests.
+     * This provides some protection against cross-site request forgery attacks (CSRF).
+     * @see https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html#samesite-cookie-attribute More information about sameSite.
      */
     private ?string $sameSite = null;
 
     /**
      * Cookie constructor.
      *
-     * @param string $name The name of the cookie
-     * @param string $value The value of of the cookie
-     * @param DateTimeInterface|null $expires The time the cookie expires
-     * @param string|null $domain The path on the server in which cookie will be available on
-     * @param string|null $path The host/domain that the cookie is available to
-     * @param bool|null $secure Whether the client should send back the cookie only over HTTPS connection
-     * @param bool|null $httpOnly Whether the cookie should be accessible only through the HTTP protocol
-     * @param string|null $sameSite Whether the cookie should be available for cross-site requests
+     * @param string $name The name of the cookie.
+     * @param string $value The value of of the cookie.
+     * @param DateTimeInterface|null $expires The time the cookie expires.
+     * @param string|null $domain The path on the server in which cookie will be available on.
+     * @param string|null $path The host/domain that the cookie is available to.
+     * @param bool|null $secure Whether the client should send back the cookie only over HTTPS connection.
+     * @param bool|null $httpOnly Whether the cookie should be accessible only through the HTTP protocol.
+     * @param string|null $sameSite Whether the cookie should be available for cross-site requests.
      *
-     * @throws InvalidArgumentException when one or more arguments are not valid
+     * @throws InvalidArgumentException When one or more arguments are not valid.
      */
     public function __construct(
         string $name,
@@ -166,7 +166,7 @@ final class Cookie
     /**
      * Creates a cookie copy with a new value.
      *
-     * @param $value string value of the cookie.
+     * @param $value string Value of the cookie.
      * @return static
      * @see $value for more information.
      */
@@ -197,7 +197,7 @@ final class Cookie
      *
      * @param DateTimeInterface $dateTime
      * @return static
-     * @see $expires for more inforemation.
+     * @see $expires for more information.
      */
     public function withExpires(DateTimeInterface $dateTime): self
     {
@@ -218,17 +218,17 @@ final class Cookie
             return null;
         }
 
-        // Can be replaced with DateTimeImmutable::createFromInterface in PHP 8
-        // returns null on `setTimestamp()` failure
+        // Can be replaced with DateTimeImmutable::createFromInterface in PHP 8.
+        // Returns null on `setTimestamp()` failure.
         return (new DateTimeImmutable())->setTimestamp($this->expires->getTimestamp()) ?: null;
     }
 
     /**
      * Indicates whether the cookie is expired.
      * The cookie is expired when it has outdated `Expires`, or
-     * zero or negative `Max-Age` attributes
+     * zero or negative `Max-Age` attributes.
      *
-     * @return bool whether the cookie is expired
+     * @return bool Whether the cookie is expired.
      */
     public function isExpired(): bool
     {
@@ -239,7 +239,7 @@ final class Cookie
      * Creates a cookie copy with a new lifetime set.
      * If zero or negative interval is passed, the cookie will expire immediately.
      *
-     * @param DateInterval $interval interval until the cookie expires.
+     * @param DateInterval $interval Interval until the cookie expires.
      * @return static
      */
     public function withMaxAge(DateInterval $interval): self
@@ -299,7 +299,7 @@ final class Cookie
     /**
      * Creates a cookie copy with a new path set.
      *
-     * @param string $path to be set for the cookie
+     * @param string $path To be set for the cookie.
      * @return static
      * @see $path for more information.
      */
@@ -320,7 +320,7 @@ final class Cookie
     }
 
     /**
-     * Gets the path of the cookie
+     * Gets the path of the cookie.
      *
      * @return string|null
      */
@@ -332,7 +332,7 @@ final class Cookie
     /**
      * Creates a cookie copy by making it secure or insecure.
      *
-     * @param bool $secure whether the cookie must be secure.
+     * @param bool $secure Whether the cookie must be secure.
      * @return static
      */
     public function withSecure(bool $secure = true): self
@@ -392,13 +392,13 @@ final class Cookie
     {
         if ($sameSite !== null
             && !in_array($sameSite, [self::SAME_SITE_LAX, self::SAME_SITE_STRICT, self::SAME_SITE_NONE], true)) {
-            throw new InvalidArgumentException('sameSite should be one of "Lax", "Strict" or "None"');
+            throw new InvalidArgumentException('sameSite should be one of "Lax", "Strict" or "None".');
         }
 
         if ($sameSite === self::SAME_SITE_NONE) {
-            // the secure flag is required for cookies that are marked as 'SameSite=None'
+            // The "secure" flag is required for cookies that are marked as 'SameSite=None'
             // so that cross-site cookies can only be accessed over HTTPS
-            // without it cookie will not be available for external access
+            // without it cookie will not be available for external access.
             $this->secure = true;
         }
 
@@ -406,7 +406,7 @@ final class Cookie
     }
 
     /**
-     * Gets the SameSite attribute
+     * Gets the SameSite attribute.
      *
      * @return string|null
      */
@@ -419,7 +419,7 @@ final class Cookie
      * Adds the cookie to the response and returns it.
      *
      * @param ResponseInterface $response
-     * @return ResponseInterface response with added cookie.
+     * @return ResponseInterface Response with added cookie.
      */
     public function addToResponse(ResponseInterface $response): ResponseInterface
     {
@@ -427,9 +427,9 @@ final class Cookie
     }
 
     /**
-     * Returns the cookie as a string.
+     * Returns the cookie as a header string.
      *
-     * @return string The cookie
+     * @return string The cookie header string.
      */
     public function __toString(): string
     {
@@ -468,7 +468,7 @@ final class Cookie
     /**
      * Parse `Set-Cookie` string and build Cookie object.
      *
-     * @param string $string `Set-Cookie` header value to parse
+     * @param string $string `Set-Cookie` header value to parse.
      * @return static
      * @throws Exception
      */
@@ -478,7 +478,7 @@ final class Cookie
         if ($rawAttributes === false) {
             throw new InvalidArgumentException('Failed to parse Set-Cookie string ' . $string);
         }
-        // array_filter with empty callback is used to filter out all falsy values
+        // array_filter with empty callback is used to filter out all falsy values.
         $rawAttributes = array_filter($rawAttributes);
 
         $rawAttribute = array_shift($rawAttributes);

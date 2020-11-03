@@ -29,14 +29,14 @@ final class CookieCollection implements IteratorAggregate, ArrayAccess, Countabl
 {
 
     /**
-     * @var Cookie[] the cookies in this collection (indexed by the cookie name)
+     * @var Cookie[] The cookies in this collection (indexed by the cookie name).
      */
     private array $cookies = [];
 
     /**
      * CookieCollection constructor.
      *
-     * @param Cookie[] $cookies the cookies that this collection initially contains.
+     * @param Cookie[] $cookies The cookies that this collection initially contains.
      */
     public function __construct(array $cookies = [])
     {
@@ -62,7 +62,7 @@ final class CookieCollection implements IteratorAggregate, ArrayAccess, Countabl
 
     /**
      * Returns an iterator for traversing the cookies in the collection.
-     * This method is required by the SPL interface [[\IteratorAggregate]].
+     * This method is required by the SPL interface {@see \IteratorAggregate}.
      * It will be implicitly called when you use `foreach` to traverse the collection.
      *
      * @return ArrayIterator
@@ -74,12 +74,12 @@ final class CookieCollection implements IteratorAggregate, ArrayAccess, Countabl
 
     /**
      * Returns whether there is a cookie with the specified name.
-     * This method is required by the SPL interface [[\ArrayAccess]].
+     * This method is required by the SPL interface {@see \ArrayAccess}.
      * It is implicitly called when you use something like `isset($collection[$name])`.
-     * This is equivalent to [[has()]].
+     * This is equivalent to {@see has()}.
      *
-     * @param string $name the cookie name
-     * @return bool whether the named cookie exists
+     * @param string $name The cookie name.
+     * @return bool Whether the named cookie exists.
      */
     public function offsetExists($name): bool
     {
@@ -88,12 +88,12 @@ final class CookieCollection implements IteratorAggregate, ArrayAccess, Countabl
 
     /**
      * Returns the cookie with the specified name.
-     * This method is required by the SPL interface [[\ArrayAccess]].
+     * This method is required by the SPL interface {@see \ArrayAccess}.
      * It is implicitly called when you use something like `$cookie = $collection[$name];`.
-     * This is equivalent to [[get()]].
+     * This is equivalent to {@see get()}.
      *
-     * @param string $name the cookie name
-     * @return Cookie the cookie with the specified name, null if the named cookie does not exist.
+     * @param string $name The cookie name.
+     * @return Cookie The cookie with the specified name, null if the named cookie does not exist.
      */
     public function offsetGet($name): Cookie
     {
@@ -102,12 +102,12 @@ final class CookieCollection implements IteratorAggregate, ArrayAccess, Countabl
 
     /**
      * Adds the cookie to the collection.
-     * This method is required by the SPL interface [[\ArrayAccess]].
+     * This method is required by the SPL interface {@see \ArrayAccess}.
      * It is implicitly called when you use something like `$collection[$name] = $cookie;`.
-     * This is equivalent to [[add()]].
+     * This is equivalent to {@see add()}.
      *
-     * @param string $name the cookie name
-     * @param Cookie $cookie the cookie to be added
+     * @param string $name The cookie name.
+     * @param Cookie $cookie The cookie to be added.
      */
     public function offsetSet($name, $cookie): void
     {
@@ -116,11 +116,11 @@ final class CookieCollection implements IteratorAggregate, ArrayAccess, Countabl
 
     /**
      * Removes the named cookie.
-     * This method is required by the SPL interface [[\ArrayAccess]].
+     * This method is required by the SPL interface {@see \ArrayAccess}.
      * It is implicitly called when you use something like `unset($collection[$name])`.
-     * This is equivalent to [[remove()]].
+     * This is equivalent to {@see remove()}.
      *
-     * @param string $name the cookie name
+     * @param string $name The cookie name.
      */
     public function offsetUnset($name): void
     {
@@ -129,10 +129,10 @@ final class CookieCollection implements IteratorAggregate, ArrayAccess, Countabl
 
     /**
      * Returns the number of cookies in the collection.
-     * This method is required by the SPL `Countable` interface.
+     * This method is required by the SPL {@see \Countable} interface.
      * It will be implicitly called when you use `count($collection)`.
      *
-     * @return int the number of cookies in the collection.
+     * @return int The number of cookies in the collection.
      */
     public function count(): int
     {
@@ -142,8 +142,8 @@ final class CookieCollection implements IteratorAggregate, ArrayAccess, Countabl
     /**
      * Returns the cookie with the specified name.
      *
-     * @param string $name the cookie name
-     * @return Cookie|null the cookie with the specified name. Null if the named cookie does not exist.
+     * @param string $name The cookie name.
+     * @return Cookie|null The cookie with the specified name. Null if the named cookie does not exist.
      * @see getValue()
      */
     public function get(string $name): ?Cookie
@@ -154,9 +154,9 @@ final class CookieCollection implements IteratorAggregate, ArrayAccess, Countabl
     /**
      * Returns the value of the named cookie.
      *
-     * @param string $name the cookie name
-     * @param mixed $defaultValue the value that should be returned when the named cookie does not exist.
-     * @return string|null the value of the named cookie or the default value if cookie is not set.
+     * @param string $name The cookie name.
+     * @param mixed $defaultValue The value that should be returned when the named cookie does not exist.
+     * @return string|null The value of the named cookie or the default value if cookie is not set.
      * @see get()
      */
     public function getValue(string $name, $defaultValue = null): ?string
@@ -168,7 +168,7 @@ final class CookieCollection implements IteratorAggregate, ArrayAccess, Countabl
      * Adds a cookie to the collection.
      * If there is already a cookie with the same name in the collection, it will be removed first.
      *
-     * @param Cookie $cookie the cookie to be added
+     * @param Cookie $cookie The cookie to be added.
      */
     public function add(Cookie $cookie): void
     {
@@ -178,8 +178,8 @@ final class CookieCollection implements IteratorAggregate, ArrayAccess, Countabl
     /**
      * Returns whether there is a cookie with the specified name.
      *
-     * @param string $name the cookie name
-     * @return bool whether the named cookie exists
+     * @param string $name The cookie name.
+     * @return bool Whether the named cookie exists.
      * @see remove()
      */
     public function has(string $name): bool
@@ -190,8 +190,8 @@ final class CookieCollection implements IteratorAggregate, ArrayAccess, Countabl
     /**
      * Removes a cookie.
      *
-     * @param string $name the name of the cookie to be removed.
-     * @return Cookie|null cookie that is removed
+     * @param string $name The name of the cookie to be removed.
+     * @return Cookie|null Cookie that was removed.
      */
     public function remove(string $name): ?Cookie
     {
@@ -216,8 +216,8 @@ final class CookieCollection implements IteratorAggregate, ArrayAccess, Countabl
     /**
      * Returns whether the collection already contains the cookie.
      *
-     * @param Cookie $cookie the cookie to check for
-     * @return bool whether cookie exists
+     * @param Cookie $cookie The cookie to check for.
+     * @return bool Whether cookie exists.
      * @see has()
      */
     public function contains(Cookie $cookie): bool
@@ -229,7 +229,7 @@ final class CookieCollection implements IteratorAggregate, ArrayAccess, Countabl
      * Tests for the existence of the cookie that satisfies the given predicate.
      *
      * @param Closure $p The predicate.
-     * @return bool whether the predicate is true for at least on cookie.
+     * @return bool Whether the predicate is true for at least on cookie.
      */
     public function exists(Closure $p): bool
     {
@@ -243,9 +243,9 @@ final class CookieCollection implements IteratorAggregate, ArrayAccess, Countabl
     }
 
     /**
-     * Expire the cookie with the specified name
+     * Expire the cookie with the specified name.
      *
-     * @param string $name the cookie name
+     * @param string $name The cookie name.
      */
     public function expire(string $name): void
     {
@@ -291,7 +291,7 @@ final class CookieCollection implements IteratorAggregate, ArrayAccess, Countabl
     /**
      * Checks whether the collection is empty (contains no cookies).
      *
-     * @return bool whether the collection is empty.
+     * @return bool Whether the collection is empty.
      */
     public function isEmpty(): bool
     {
@@ -301,8 +301,8 @@ final class CookieCollection implements IteratorAggregate, ArrayAccess, Countabl
     /**
      * Populates the cookie collection from an array of 'name' => 'value' pairs.
      *
-     * @param array $array the cookies to populate from
-     * @return static collection created from array
+     * @param array $array The cookies to populate from.
+     * @return static Collection created from array.
      */
     public static function fromArray(array $array): self
     {
@@ -310,7 +310,7 @@ final class CookieCollection implements IteratorAggregate, ArrayAccess, Countabl
             return new self();
         }
 
-        // check if associative array with 'name' => 'value' pairs is passed
+        // Check if associative array with 'name' => 'value' pairs is passed.
         if (count(array_filter(array_keys($array), 'is_string')) !== count($array)) {
             throw new InvalidArgumentException('Array in wrong format is passed.');
         }
@@ -321,8 +321,8 @@ final class CookieCollection implements IteratorAggregate, ArrayAccess, Countabl
     /**
      * Adds the cookies in the collection to response and returns it.
      *
-     * @param ResponseInterface $response
-     * @return ResponseInterface response with added cookies.
+     * @param ResponseInterface $response Response to add cookies to.
+     * @return ResponseInterface Response with added cookies.
      */
     public function addToResponse(ResponseInterface $response): ResponseInterface
     {
@@ -336,8 +336,8 @@ final class CookieCollection implements IteratorAggregate, ArrayAccess, Countabl
     /**
      * Creates a copy of the response with cookies set from the collection.
      *
-     * @param ResponseInterface $response
-     * @return ResponseInterface response with new cookies.
+     * @param ResponseInterface $response Response to set cookies to.
+     * @return ResponseInterface Response with new cookies.
      */
     public function setToResponse(ResponseInterface $response): ResponseInterface
     {
@@ -348,8 +348,8 @@ final class CookieCollection implements IteratorAggregate, ArrayAccess, Countabl
     /**
      * Populates the cookie collection from a ResponseInterface.
      *
-     * @param ResponseInterface $response the response object to populate from
-     * @return static collection created from response
+     * @param ResponseInterface $response The response object to populate from.
+     * @return static Collection created from response.
      * @throws Exception
      */
     public static function fromResponse(ResponseInterface $response): self
