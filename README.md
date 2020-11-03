@@ -14,7 +14,11 @@
 [![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2Fyiisoft%2Fcookies%2Fmaster)](https://dashboard.stryker-mutator.io/reports/github.com/yiisoft/cookies/master)
 [![static analysis](https://github.com/yiisoft/cookies/workflows/static%20analysis/badge.svg)](https://github.com/yiisoft/cookies/actions?query=workflow%3A%22static+analysis%22)
 
-The package ...
+The package helps in working with HTTP cookies in a [PSR-7](https://www.php-fig.org/psr/psr-7/) environment:
+ 
+- provides a handy abstraction representing a cookie
+- allows dealing with many cookies at once
+- forms and adds `Set-Cookie` headers to response
 
 ## Installation
 
@@ -25,6 +29,30 @@ composer install yiisoft/cookies
 ```
 
 ## General usage
+
+Adding a cookie to reponse:
+
+```php
+$cookie = (new \Yiisoft\Cookies\Cookie('cookieName', 'value'))
+    ->withPath('/')
+    ->withDomain('yiiframework.com')
+    ->withHttpOnly(true)
+    ->withSecure(true)
+    ->withSameSite(\Yiisoft\Cookies\Cookie::SAME_SITE_STRICT)
+    ->withMaxAge(new \DateInterval('P7D'));
+
+$response = $cookie->addToResponse($response);
+```
+
+Getting a cookie collection from response:
+
+```php
+$cookies = \Yiisoft\Cookies\CookieCollection::fromResponse($response);
+$cookies->expire('login');
+$response = $cookies->setToResponse($response);
+```
+
+See [Yii guide to cookies](https://github.com/yiisoft/docs/blob/master/guide/en/runtime/cookies.md) for more info.
 
 ## Unit testing
 
