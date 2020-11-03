@@ -474,10 +474,9 @@ final class Cookie
      */
     public static function fromCookieString(string $string): self
     {
+        /** @psalm-var list<string> $rawAttributes */
         $rawAttributes = preg_split('~\s*[;]\s*~', $string);
-        if ($rawAttributes === false) {
-            throw new InvalidArgumentException('Failed to parse Set-Cookie string ' . $string);
-        }
+
         // array_filter with empty callback is used to filter out all falsy values.
         $rawAttributes = array_filter($rawAttributes);
 
