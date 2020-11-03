@@ -166,13 +166,26 @@ final class CookieTest extends TestCase
                 )
             ],
             [
-                'sessionId=e8bb43229de9; Domain=foo.example.com; '
+                'sessionId=e8bb43229de9; Domain=foo.example.com=test; '
                 . 'Expires=' . $expireDate->format(\DateTimeInterface::RFC7231) . '; ',
                 new Cookie(
                     'sessionId',
                     'e8bb43229de9',
                     $expireDate,
-                    'foo.example.com',
+                    'foo.example.com=test',
+                    null,
+                    false,
+                    false,
+                    null
+                )
+            ],
+            [
+                'sessionId=e8bb43229de9; Domain=foo.example.com=test; Max-Age=bla',
+                new Cookie(
+                    'sessionId',
+                    'e8bb43229de9',
+                    new \DateTimeImmutable(),
+                    'foo.example.com=test',
                     null,
                     false,
                     false,
