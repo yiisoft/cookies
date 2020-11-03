@@ -54,10 +54,16 @@ final class CookieTest extends TestCase
         $this->assertSame("test=42; Expires=$formattedDateTime; Max-Age=$maxAge; Path=/; Secure; HttpOnly; SameSite=Lax", $this->getCookieHeader($cookie));
     }
 
-    public function testIsExpired(): void
+    public function testIsExpiredTrue(): void
     {
         $cookie = (new Cookie('test', '42'))->withExpires((new \DateTimeImmutable('-5 years')));
         $this->assertTrue($cookie->isExpired());
+    }
+
+    public function testIsExpiredFalse(): void
+    {
+        $cookie = (new Cookie('test', '42'))->withExpires((new \DateTimeImmutable('+5 years')));
+        $this->assertFalse($cookie->isExpired());
     }
 
     public function testWithMaxAge(): void
@@ -110,13 +116,19 @@ final class CookieTest extends TestCase
 
     public function testWithSecure(): void
     {
+        $defaultSecure = (new Cookie('test', '42'))->withSecure();
         $cookie = (new Cookie('test', '42'))->withSecure(false);
+
+        $this->assertSame('test=42; Path=/; Secure; HttpOnly; SameSite=Lax', $this->getCookieHeader($defaultSecure));
         $this->assertSame('test=42; Path=/; HttpOnly; SameSite=Lax', $this->getCookieHeader($cookie));
     }
 
     public function testHttpOnly(): void
     {
+        $defaultHttpOnly = (new Cookie('test', '42'))->withHttpOnly();
         $cookie = (new Cookie('test', '42'))->withHttpOnly(false);
+
+        $this->assertSame('test=42; Path=/; Secure; HttpOnly; SameSite=Lax', $this->getCookieHeader($defaultHttpOnly));
         $this->assertSame('test=42; Path=/; Secure; SameSite=Lax', $this->getCookieHeader($cookie));
     }
 
@@ -135,9 +147,9 @@ final class CookieTest extends TestCase
     public function testFromCookieString(): void
     {
         $expireDate = new \DateTimeImmutable('+60 minutes');
-        $setCookieString = 'sessionId=e8bb43229de9; Domain=foo.example.com; ';
-        $setCookieString .= 'Expires=' . $expireDate->format(\DateTimeInterface::RFC7231) . '; ';
-        $setCookieString .= 'Max-Age=3600; Path=/; Secure; SameSite=Strict; ExtraKey';
+        $setCookieString = 'sessionId=e8bb43229de9; Domain=foo.example.com; '
+            . 'Expires=' . $expireDate->format(\DateTimeInterface::RFC7231) . '; '
+            . 'Max-Age=3600; WeirdKey; Path=/; Secure; HttpOnly; SameSite=Strict; ExtraKey';
 
         $cookie = new Cookie(
             'sessionId',
@@ -146,11 +158,10 @@ final class CookieTest extends TestCase
             'foo.example.com',
             '/',
             true,
-            false,
+            true,
             Cookie::SAME_SITE_STRICT
         );
         $cookie2 = Cookie::fromCookieString($setCookieString);
-
         $this->assertSame((string)$cookie, (string)$cookie2);
     }
 
@@ -193,5 +204,27 @@ final class CookieTest extends TestCase
 
         $cookie = $cookie->withSameSite(Cookie::SAME_SITE_LAX);
         $this->assertEquals(Cookie::SAME_SITE_LAX, $cookie->getSameSite());
+    }
+
+    public function testImmutability(): void
+    {
+        $expires = new \DateTime();
+        $original = new Cookie('test', 'value', $expires);
+        $withExpires = $original->withExpires($expires);
+        $expires->setDate(2000, 12, 7);
+
+        $this->assertNotEquals(2000, $original->getExpires()->format('Y'));
+        $this->assertNotSame($original, $withExpires);
+        $this->assertNotEquals(2000, $original->getExpires()->format('Y'));
+
+        $this->assertNotSame($original, $original->withDomain('test'));
+        $this->assertNotSame($original, $original->withHttpOnly(true));
+        $this->assertNotSame($original, $original->withMaxAge(new \DateInterval('P1D')));
+        $this->assertNotSame($original, $original->withPath('test'));
+        $this->assertNotSame($original, $original->withSameSite(Cookie::SAME_SITE_LAX));
+        $this->assertNotSame($original, $original->withSecure(true));
+        $this->assertNotSame($original, $original->withValue('value'));
+        $this->assertNotSame($original, $original->expire());
+        $this->assertNotSame($original, $original->expireWhenBrowserIsClosed());
     }
 }

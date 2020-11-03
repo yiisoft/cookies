@@ -483,7 +483,7 @@ final class Cookie
         $rawAttribute = array_shift($rawAttributes);
 
         if (!is_string($rawAttribute)) {
-            throw new InvalidArgumentException('Cookie string must have at least name');
+            throw new InvalidArgumentException('Cookie string must have at least name.');
         }
 
         [$cookieName, $cookieValue] = self::splitCookieAttribute($rawAttribute);
