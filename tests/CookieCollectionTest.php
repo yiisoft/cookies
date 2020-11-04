@@ -95,6 +95,11 @@ final class CookieCollectionTest extends TestCase
         $this->assertEquals($cookie, $this->collection->get('test'));
     }
 
+    public function testGetNonExisting(): void
+    {
+        $this->assertEquals(null, $this->collection->get('test'));
+    }
+
     public function testGetValue(): void
     {
         $this->collection->add(new Cookie('test', 'testVal'));
@@ -167,7 +172,12 @@ final class CookieCollectionTest extends TestCase
         $this->collection->add($cookieOne);
         $this->collection->add($cookieTwo);
 
-        $this->assertIsIterable($this->collection);
+        $iterated = [];
+        foreach ($this->collection as $key => $cookie) {
+            $iterated[$key] = $cookie;
+        }
+
+        $this->assertEquals(['one' => $cookieOne, 'two' => $cookieTwo], $iterated);
     }
 
     public function testExpire(): void
@@ -176,6 +186,12 @@ final class CookieCollectionTest extends TestCase
         $this->collection->expire('test');
 
         $this->assertTrue($this->collection->get('test')->isExpired());
+    }
+
+    public function testExpireWithNonExistingKey(): void
+    {
+        $this->collection->expire('test');
+        $this->assertFalse($this->collection->has('test'));
     }
 
     public function testFromArray(): void

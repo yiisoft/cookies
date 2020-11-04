@@ -54,10 +54,16 @@ final class CookieTest extends TestCase
         $this->assertSame("test=42; Expires=$formattedDateTime; Max-Age=$maxAge; Path=/; Secure; HttpOnly; SameSite=Lax", $this->getCookieHeader($cookie));
     }
 
-    public function testIsExpired(): void
+    public function testIsExpiredTrue(): void
     {
         $cookie = (new Cookie('test', '42'))->withExpires((new \DateTimeImmutable('-5 years')));
         $this->assertTrue($cookie->isExpired());
+    }
+
+    public function testIsExpiredFalse(): void
+    {
+        $cookie = (new Cookie('test', '42'))->withExpires((new \DateTimeImmutable('+5 years')));
+        $this->assertFalse($cookie->isExpired());
     }
 
     public function testWithMaxAge(): void
@@ -110,13 +116,19 @@ final class CookieTest extends TestCase
 
     public function testWithSecure(): void
     {
+        $defaultSecure = (new Cookie('test', '42'))->withSecure();
         $cookie = (new Cookie('test', '42'))->withSecure(false);
+
+        $this->assertSame('test=42; Path=/; Secure; HttpOnly; SameSite=Lax', $this->getCookieHeader($defaultSecure));
         $this->assertSame('test=42; Path=/; HttpOnly; SameSite=Lax', $this->getCookieHeader($cookie));
     }
 
     public function testHttpOnly(): void
     {
+        $defaultHttpOnly = (new Cookie('test', '42'))->withHttpOnly();
         $cookie = (new Cookie('test', '42'))->withHttpOnly(false);
+
+        $this->assertSame('test=42; Path=/; Secure; HttpOnly; SameSite=Lax', $this->getCookieHeader($defaultHttpOnly));
         $this->assertSame('test=42; Path=/; Secure; SameSite=Lax', $this->getCookieHeader($cookie));
     }
 
@@ -132,25 +144,63 @@ final class CookieTest extends TestCase
         $this->assertSame('test=42; Path=/; Secure; HttpOnly; SameSite=None', $this->getCookieHeader($cookie));
     }
 
-    public function testFromCookieString(): void
+    public function fromCookieStringDataProvider(): array
     {
-        $expireDate = new \DateTimeImmutable('+60 minutes');
-        $setCookieString = 'sessionId=e8bb43229de9; Domain=foo.example.com; ';
-        $setCookieString .= 'Expires=' . $expireDate->format(\DateTimeInterface::RFC7231) . '; ';
-        $setCookieString .= 'Max-Age=3600; Path=/; Secure; SameSite=Strict; ExtraKey';
+        $maxAgeDate = new \DateTimeImmutable('+60 minutes');
+        $expireDate = new \DateTimeImmutable('2012/12/7 10:00 UTC+0');
 
-        $cookie = new Cookie(
-            'sessionId',
-            'e8bb43229de9',
-            $expireDate,
-            'foo.example.com',
-            '/',
-            true,
-            false,
-            Cookie::SAME_SITE_STRICT
-        );
+        return [
+            [
+                'sessionId=e8bb43229de9; Domain=foo.example.com; '
+                . 'Expires=' . $maxAgeDate->format(\DateTimeInterface::RFC7231) . '; '
+                . 'Max-Age=3600; WeirdKey; Path=/test; Secure; HttpOnly; SameSite=Strict; ExtraKey',
+                new Cookie(
+                    'sessionId',
+                    'e8bb43229de9',
+                    $maxAgeDate,
+                    'foo.example.com',
+                    '/test',
+                    true,
+                    true,
+                    Cookie::SAME_SITE_STRICT
+                )
+            ],
+            [
+                'sessionId=e8bb43229de9; Domain=foo.example.com=test; '
+                . 'Expires=' . $expireDate->format(\DateTimeInterface::RFC7231) . '; ',
+                new Cookie(
+                    'sessionId',
+                    'e8bb43229de9',
+                    $expireDate,
+                    'foo.example.com=test',
+                    null,
+                    false,
+                    false,
+                    null
+                )
+            ],
+            [
+                'sessionId=e8bb43229de9; Domain=foo.example.com=test; Max-Age=bla',
+                new Cookie(
+                    'sessionId',
+                    'e8bb43229de9',
+                    new \DateTimeImmutable(),
+                    'foo.example.com=test',
+                    null,
+                    false,
+                    false,
+                    null
+                )
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider fromCookieStringDataProvider
+     */
+    public function testFromCookieString(string $setCookieString, Cookie $cookie): void
+    {
         $cookie2 = Cookie::fromCookieString($setCookieString);
-
         $this->assertSame((string)$cookie, (string)$cookie2);
     }
 
@@ -193,5 +243,27 @@ final class CookieTest extends TestCase
 
         $cookie = $cookie->withSameSite(Cookie::SAME_SITE_LAX);
         $this->assertEquals(Cookie::SAME_SITE_LAX, $cookie->getSameSite());
+    }
+
+    public function testImmutability(): void
+    {
+        $expires = new \DateTime();
+        $original = new Cookie('test', 'value', $expires);
+        $withExpires = $original->withExpires($expires);
+        $expires->setDate(2000, 12, 7);
+
+        $this->assertNotEquals(2000, $original->getExpires()->format('Y'));
+        $this->assertNotSame($original, $withExpires);
+        $this->assertNotEquals(2000, $withExpires->getExpires()->format('Y'));
+
+        $this->assertNotSame($original, $original->withDomain('test'));
+        $this->assertNotSame($original, $original->withHttpOnly(true));
+        $this->assertNotSame($original, $original->withMaxAge(new \DateInterval('P1D')));
+        $this->assertNotSame($original, $original->withPath('test'));
+        $this->assertNotSame($original, $original->withSameSite(Cookie::SAME_SITE_LAX));
+        $this->assertNotSame($original, $original->withSecure(true));
+        $this->assertNotSame($original, $original->withValue('value'));
+        $this->assertNotSame($original, $original->expire());
+        $this->assertNotSame($original, $original->expireWhenBrowserIsClosed());
     }
 }
