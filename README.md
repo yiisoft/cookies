@@ -13,6 +13,7 @@
 [![Code Coverage](https://scrutinizer-ci.com/g/yiisoft/cookies/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/yiisoft/cookies/?branch=master)
 [![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2Fyiisoft%2Fcookies%2Fmaster)](https://dashboard.stryker-mutator.io/reports/github.com/yiisoft/cookies/master)
 [![static analysis](https://github.com/yiisoft/cookies/workflows/static%20analysis/badge.svg)](https://github.com/yiisoft/cookies/actions?query=workflow%3A%22static+analysis%22)
+[![type-coverage](https://shepherd.dev/github/yiisoft/cookies/coverage.svg)](https://shepherd.dev/github/yiisoft/cookies)
 
 The package helps in working with HTTP cookies in a [PSR-7](https://www.php-fig.org/psr/psr-7/) environment:
  
