@@ -10,7 +10,6 @@ use Yiisoft\Cookies\Cookie;
 
 final class CookieTest extends TestCase
 {
-
     private function getCookieHeader(Cookie $cookie): string
     {
         $response = new Response();
@@ -163,7 +162,7 @@ final class CookieTest extends TestCase
                     true,
                     true,
                     Cookie::SAME_SITE_STRICT
-                )
+                ),
             ],
             [
                 'sessionId=e8bb43229de9; Domain=foo.example.com=test; '
@@ -177,7 +176,7 @@ final class CookieTest extends TestCase
                     false,
                     false,
                     null
-                )
+                ),
             ],
             [
                 'sessionId=e8bb43229de9; Domain=foo.example.com=test; Max-Age=bla',
@@ -190,7 +189,7 @@ final class CookieTest extends TestCase
                     false,
                     false,
                     null
-                )
+                ),
             ],
         ];
     }

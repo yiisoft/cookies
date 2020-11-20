@@ -11,7 +11,6 @@ use Yiisoft\Cookies\CookieCollection;
 
 final class CookieCollectionTest extends TestCase
 {
-
     private CookieCollection $collection;
 
     protected function setUp(): void

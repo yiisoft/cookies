@@ -4,20 +4,20 @@ declare(strict_types=1);
 
 namespace Yiisoft\Cookies;
 
+use function array_filter;
+use function array_shift;
 use DateInterval;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Exception;
-use InvalidArgumentException;
-use Psr\Http\Message\ResponseInterface;
 
-use function array_filter;
-use function array_shift;
 use function explode;
 use function implode;
 use function in_array;
+use InvalidArgumentException;
 use function preg_match;
 use function preg_split;
+use Psr\Http\Message\ResponseInterface;
 use function strtolower;
 use function time;
 
@@ -26,9 +26,9 @@ use function time;
  */
 final class Cookie
 {
-
     /**
      * Regular Expression used to validate cookie name.
+     *
      * @link https://tools.ietf.org/html/rfc6265#section-4.1.1
      * @link https://tools.ietf.org/html/rfc2616#section-2.2
      */
@@ -40,6 +40,7 @@ final class Cookie
      * E.g. a POST request from https://otherdomain.com to https://yourdomain.com will not include the cookie, however a GET request will.
      * When a user follows a link from https://otherdomain.com to https://yourdomain.com it will include the cookie.
      * This is the default value in modern browsers.
+     *
      * @see $sameSite
      */
     public const SAME_SITE_LAX = 'Lax';
@@ -49,6 +50,7 @@ final class Cookie
      * regardless of the request method and even when following a regular link.
      * E.g. a GET request from https://otherdomain.com to https://yourdomain.com or a user following a link from
      * https://otherdomain.com to https://yourdomain.com will not include the cookie.
+     *
      * @see $sameSite
      */
     public const SAME_SITE_STRICT = 'Strict';
@@ -56,6 +58,7 @@ final class Cookie
     /**
      * SameSite policy `None` cookies will be sent in all contexts, i.e. sending cross-origin is allowed.
      * `None` requires the `Secure` attribute in latest browser versions.
+     *
      * @see $sameSite
      */
     public const SAME_SITE_NONE = 'None';
@@ -76,6 +79,7 @@ final class Cookie
      * @var DateTimeInterface|null The maximum lifetime of the cookie.
      * If unspecified, the cookie becomes a session cookie, which will be removed
      * when the client shuts down.
+     *
      * @link https://tools.ietf.org/html/rfc6265#section-4.1.1
      * @link https://tools.ietf.org/html/rfc1123#page-55
      */
@@ -111,6 +115,7 @@ final class Cookie
     /**
      * @var string|null Asserts that a cookie must not be sent with cross-origin requests.
      * This provides some protection against cross-site request forgery attacks (CSRF).
+     *
      * @see https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html#samesite-cookie-attribute More information about sameSite.
      */
     private ?string $sameSite = null;
@@ -167,7 +172,9 @@ final class Cookie
      * Creates a cookie copy with a new value.
      *
      * @param $value string Value of the cookie.
+     *
      * @return static
+     *
      * @see $value for more information.
      */
     public function withValue(string $value): self
@@ -196,7 +203,9 @@ final class Cookie
      * Creates a cookie copy with a new time the cookie expires.
      *
      * @param DateTimeInterface $dateTime
+     *
      * @return static
+     *
      * @see $expires for more information.
      */
     public function withExpires(DateTimeInterface $dateTime): self
@@ -240,6 +249,7 @@ final class Cookie
      * If zero or negative interval is passed, the cookie will expire immediately.
      *
      * @param DateInterval $interval Interval until the cookie expires.
+     *
      * @return static
      */
     public function withMaxAge(DateInterval $interval): self
@@ -251,6 +261,7 @@ final class Cookie
 
     /**
      * Returns modified cookie that will expire immediately.
+     *
      * @return static
      */
     public function expire(): self
@@ -277,6 +288,7 @@ final class Cookie
      * Creates a cookie copy with a new domain set.
      *
      * @param string $domain
+     *
      * @return static
      */
     public function withDomain(string $domain): self
@@ -300,7 +312,9 @@ final class Cookie
      * Creates a cookie copy with a new path set.
      *
      * @param string $path To be set for the cookie.
+     *
      * @return static
+     *
      * @see $path for more information.
      */
     public function withPath(string $path): self
@@ -333,6 +347,7 @@ final class Cookie
      * Creates a cookie copy by making it secure or insecure.
      *
      * @param bool $secure Whether the cookie must be secure.
+     *
      * @return static
      */
     public function withSecure(bool $secure = true): self
@@ -356,6 +371,7 @@ final class Cookie
      * Creates a cookie copy that would be accessible only through the HTTP protocol.
      *
      * @param bool $httpOnly
+     *
      * @return static
      */
     public function withHttpOnly(bool $httpOnly = true): self
@@ -379,6 +395,7 @@ final class Cookie
      * Creates a cookie copy with SameSite attribute.
      *
      * @param string $sameSite
+     *
      * @return static
      */
     public function withSameSite(string $sameSite): self
@@ -419,6 +436,7 @@ final class Cookie
      * Adds the cookie to the response and returns it.
      *
      * @param ResponseInterface $response
+     *
      * @return ResponseInterface Response with added cookie.
      */
     public function addToResponse(ResponseInterface $response): ResponseInterface
@@ -434,7 +452,7 @@ final class Cookie
     public function __toString(): string
     {
         $cookieParts = [
-            $this->name . '=' . urlencode($this->value)
+            $this->name . '=' . urlencode($this->value),
         ];
 
         if ($this->expires !== null) {
@@ -469,8 +487,10 @@ final class Cookie
      * Parse `Set-Cookie` string and build Cookie object.
      *
      * @param string $string `Set-Cookie` header value to parse.
-     * @return static
+     *
      * @throws Exception
+     *
+     * @return static
      */
     public static function fromCookieString(string $string): self
     {
