@@ -281,10 +281,11 @@ final class CookieCollection implements IteratorAggregate, ArrayAccess, Countabl
      * parameter of the callback as reference.
      *
      * @param callable $callback
-     * @psalm-param callable(Cookie, string):void $p
+     * @psalm-param callable(Cookie, string):void $callback
      */
     public function walk(callable $callback): void
     {
+        /** @psalm-suppress MixedPropertyTypeCoercion */
         array_walk($this->cookies, $callback);
     }
 
