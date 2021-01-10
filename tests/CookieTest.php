@@ -15,6 +15,19 @@ use Yiisoft\Cookies\Cookie;
 
 final class CookieTest extends TestCase
 {
+    /**
+     * Use different values in different tests
+     *
+     * @var int|null
+     */
+    public static ?int $timeResult;
+
+    protected function setUp(): void
+    {
+        self::$timeResult = null;
+        parent::setUp();
+    }
+
     private function getCookieHeader(Cookie $cookie): string
     {
         $response = new Response();
@@ -71,6 +84,17 @@ final class CookieTest extends TestCase
     {
         $cookie = (new Cookie('test', '42'))->withExpires((new DateTimeImmutable('+5 years')));
         $this->assertFalse($cookie->isExpired());
+    }
+
+    public function testExpiredLimit(): void
+    {
+        $cookie = (new Cookie('test', '42'))->withExpires((new DateTimeImmutable())->setTimestamp(999));
+
+        self::$timeResult = 999;
+        $this->assertFalse($cookie->isExpired());
+
+        self::$timeResult = 1000;
+        $this->assertTrue($cookie->isExpired());
     }
 
     public function testWithMaxAge(): void
@@ -220,10 +244,17 @@ final class CookieTest extends TestCase
         $this->assertSame((string)$cookie, (string)$cookie2);
     }
 
+    public function testFromCookieStringWithEmptyString(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Cookie string must have at least name.');
+        Cookie::fromCookieString('');
+    }
+
     public function testFromCookieStringWithInvalidString(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        Cookie::fromCookieString('');
+        Cookie::fromCookieString('  ;  ');
     }
 
     public function testGetters(): void
@@ -282,4 +313,13 @@ final class CookieTest extends TestCase
         $this->assertNotSame($original, $original->expire());
         $this->assertNotSame($original, $original->expireWhenBrowserIsClosed());
     }
+}
+
+namespace Yiisoft\Cookies;
+
+use Yiisoft\Cookies\Tests\CookieTest;
+
+function time(): int
+{
+    return CookieTest::$timeResult ?? \time();
 }
