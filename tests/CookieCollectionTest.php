@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Yiisoft\Cookies\Tests;
 
+use DateTimeImmutable;
+use InvalidArgumentException;
 use Nyholm\Psr7\Response;
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Cookies\Cookie;
@@ -20,7 +22,7 @@ final class CookieCollectionTest extends TestCase
 
     public function testConstructorWithInvalidArray(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         new CookieCollection([new Cookie('test'), 'string']);
     }
 
@@ -206,7 +208,7 @@ final class CookieCollectionTest extends TestCase
     {
         $cookieArray = ['one', 'two'];
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         CookieCollection::fromArray($cookieArray);
     }
 
@@ -214,7 +216,7 @@ final class CookieCollectionTest extends TestCase
     {
         $cookieArray = ['one' => 'oneValue', 'two'];
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         CookieCollection::fromArray($cookieArray);
     }
 
@@ -228,7 +230,7 @@ final class CookieCollectionTest extends TestCase
     public function testFromArrayWithInvalidArgument(): void
     {
         $cookieArray = ['one', 'two'];
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         CookieCollection::fromArray($cookieArray);
     }
 
@@ -236,7 +238,7 @@ final class CookieCollectionTest extends TestCase
     {
         $response = (new Response())->withHeader('Set-Cookie', 'oldCookie=oldValue;Secure');
         $this->collection->add(new Cookie('one', 'oneValue'));
-        $this->collection->add(new Cookie('two', 'twoValue', new \DateTimeImmutable()));
+        $this->collection->add(new Cookie('two', 'twoValue', new DateTimeImmutable()));
 
         $response = $this->collection->addToResponse($response);
         $this->assertCount(3, $response->getHeader('Set-Cookie'));
@@ -247,11 +249,14 @@ final class CookieCollectionTest extends TestCase
     {
         $response = (new Response())->withHeader('Set-Cookie', 'oldCookie=oldValue;Secure');
         $this->collection->add(new Cookie('one', 'oneValue'));
-        $this->collection->add(new Cookie('two', 'twoValue', new \DateTimeImmutable()));
+        $this->collection->add(new Cookie('two', 'twoValue', new DateTimeImmutable()));
 
         $response = $this->collection->setToResponse($response);
         $this->assertCount(2, $response->getHeader('Set-Cookie'));
-        $this->assertEquals('one=oneValue; Path=/; Secure; HttpOnly; SameSite=Lax', $response->getHeader('Set-Cookie')[0]);
+        $this->assertEquals(
+            'one=oneValue; Path=/; Secure; HttpOnly; SameSite=Lax',
+            $response->getHeader('Set-Cookie')[0]
+        );
     }
 
     public function testFromResponse(): void

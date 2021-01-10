@@ -4,20 +4,17 @@ declare(strict_types=1);
 
 namespace Yiisoft\Cookies;
 
-use function array_keys;
-use function array_values;
-use function array_walk;
 use ArrayAccess;
 use ArrayIterator;
-use function count;
 use Countable;
 use Exception;
-
-use function in_array;
 use InvalidArgumentException;
 use IteratorAggregate;
 use Psr\Http\Message\ResponseInterface;
 use Yiisoft\Http\Header;
+
+use function count;
+use function in_array;
 
 /**
  * A CookieCollection helps to work with many cookies at once and to read / modify response cookies.
@@ -338,7 +335,11 @@ final class CookieCollection implements IteratorAggregate, ArrayAccess, Countabl
         }
 
         /** @psalm-var array<string,string> $array */
-        return new self(array_map(static fn (string $name, string $value) => new Cookie($name, $value), array_keys($array), $array));
+        return new self(array_map(
+            static fn (string $name, string $value) => new Cookie($name, $value),
+            array_keys($array),
+            $array
+        ));
     }
 
     /**
