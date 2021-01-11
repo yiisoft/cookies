@@ -109,7 +109,7 @@ final class Cookie
      * @var string|null Asserts that a cookie must not be sent with cross-origin requests.
      * This provides some protection against cross-site request forgery attacks (CSRF).
      *
-     * @see https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html#samesite-cookie-attribute
+     * @link https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html#samesite-cookie-attribute
      * More information about sameSite.
      */
     private ?string $sameSite = null;
