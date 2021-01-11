@@ -4,22 +4,14 @@ declare(strict_types=1);
 
 namespace Yiisoft\Cookies;
 
-use function array_filter;
-use function array_shift;
 use DateInterval;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Exception;
-
-use function explode;
-use function implode;
-use function in_array;
 use InvalidArgumentException;
-use function preg_match;
-use function preg_split;
 use Psr\Http\Message\ResponseInterface;
-use function strtolower;
-use function time;
+
+use function in_array;
 
 /**
  * Represents a cookie and also helps adding Set-Cookie header to response in order to set a cookie.
@@ -37,7 +29,8 @@ final class Cookie
     /**
      * SameSite policy `Lax` will prevent the cookie from being sent by the browser in all cross-site browsing contexts
      * during CSRF-prone request methods (e.g. POST, PUT, PATCH etc).
-     * E.g. a POST request from https://otherdomain.com to https://yourdomain.com will not include the cookie, however a GET request will.
+     * E.g. a POST request from https://otherdomain.com to https://yourdomain.com will not include the cookie,
+     * however a GET request will.
      * When a user follows a link from https://otherdomain.com to https://yourdomain.com it will include the cookie.
      * This is the default value in modern browsers.
      *
@@ -46,8 +39,8 @@ final class Cookie
     public const SAME_SITE_LAX = 'Lax';
 
     /**
-     * SameSite policy `Strict` will prevent the cookie from being sent by the browser in all cross-site browsing contexts
-     * regardless of the request method and even when following a regular link.
+     * SameSite policy `Strict` will prevent the cookie from being sent by the browser in all cross-site
+     * browsing contexts regardless of the request method and even when following a regular link.
      * E.g. a GET request from https://otherdomain.com to https://yourdomain.com or a user following a link from
      * https://otherdomain.com to https://yourdomain.com will not include the cookie.
      *
@@ -116,7 +109,8 @@ final class Cookie
      * @var string|null Asserts that a cookie must not be sent with cross-origin requests.
      * This provides some protection against cross-site request forgery attacks (CSRF).
      *
-     * @see https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html#samesite-cookie-attribute More information about sameSite.
+     * @link https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html#samesite-cookie-attribute
+     * More information about sameSite.
      */
     private ?string $sameSite = null;
 
@@ -407,8 +401,10 @@ final class Cookie
 
     private function setSameSite(?string $sameSite): void
     {
-        if ($sameSite !== null
-            && !in_array($sameSite, [self::SAME_SITE_LAX, self::SAME_SITE_STRICT, self::SAME_SITE_NONE], true)) {
+        if (
+            $sameSite !== null
+            && !in_array($sameSite, [self::SAME_SITE_LAX, self::SAME_SITE_STRICT, self::SAME_SITE_NONE], true)
+        ) {
             throw new InvalidArgumentException('sameSite should be one of "Lax", "Strict" or "None".');
         }
 

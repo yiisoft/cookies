@@ -4,12 +4,30 @@ declare(strict_types=1);
 
 namespace Yiisoft\Cookies\Tests;
 
+use DateInterval;
+use DateTime;
+use DateTimeImmutable;
+use DateTimeZone;
+use InvalidArgumentException;
 use Nyholm\Psr7\Response;
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Cookies\Cookie;
 
 final class CookieTest extends TestCase
 {
+    /**
+     * Use different values in different tests
+     *
+     * @var int|null
+     */
+    public static ?int $timeResult;
+
+    protected function setUp(): void
+    {
+        self::$timeResult = null;
+        parent::setUp();
+    }
+
     private function getCookieHeader(Cookie $cookie): string
     {
         $response = new Response();
@@ -19,7 +37,7 @@ final class CookieTest extends TestCase
 
     public function testInvalidName(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         new Cookie('test[]', '42');
     }
 
@@ -43,34 +61,51 @@ final class CookieTest extends TestCase
 
     public function testWithExpires(): void
     {
-        $expireDateTime = new \DateTime('+1 year');
-        $expireDateTime->setTimezone(new \DateTimeZone('GMT'));
+        $expireDateTime = new DateTime('+1 year');
+        $expireDateTime->setTimezone(new DateTimeZone('GMT'));
         $formattedDateTime = $expireDateTime->format(\DateTimeInterface::RFC7231);
         $maxAge = $expireDateTime->getTimestamp() - time();
 
         $cookie = (new Cookie('test', '42'))->withExpires($expireDateTime);
 
-        $this->assertSame("test=42; Expires=$formattedDateTime; Max-Age=$maxAge; Path=/; Secure; HttpOnly; SameSite=Lax", $this->getCookieHeader($cookie));
+        $this->assertSame(
+            "test=42; Expires=$formattedDateTime; Max-Age=$maxAge; Path=/; Secure; HttpOnly; SameSite=Lax",
+            $this->getCookieHeader($cookie)
+        );
     }
 
     public function testIsExpiredTrue(): void
     {
-        $cookie = (new Cookie('test', '42'))->withExpires((new \DateTimeImmutable('-5 years')));
+        $cookie = (new Cookie('test', '42'))->withExpires((new DateTimeImmutable('-5 years')));
         $this->assertTrue($cookie->isExpired());
     }
 
     public function testIsExpiredFalse(): void
     {
-        $cookie = (new Cookie('test', '42'))->withExpires((new \DateTimeImmutable('+5 years')));
+        $cookie = (new Cookie('test', '42'))->withExpires((new DateTimeImmutable('+5 years')));
         $this->assertFalse($cookie->isExpired());
+    }
+
+    public function testExpiredLimit(): void
+    {
+        $cookie = (new Cookie('test', '42'))->withExpires((new DateTimeImmutable())->setTimestamp(999));
+
+        self::$timeResult = 999;
+        $this->assertFalse($cookie->isExpired());
+
+        self::$timeResult = 1000;
+        $this->assertTrue($cookie->isExpired());
     }
 
     public function testWithMaxAge(): void
     {
-        $formattedExpire = (new \DateTimeImmutable())->setTimestamp(time() + 3600)->format(\DateTimeInterface::RFC7231);
-        $cookie = (new Cookie('test', '42'))->withMaxAge(new \DateInterval('PT3600S'));
+        $formattedExpire = (new DateTimeImmutable())->setTimestamp(time() + 3600)->format(\DateTimeInterface::RFC7231);
+        $cookie = (new Cookie('test', '42'))->withMaxAge(new DateInterval('PT3600S'));
 
-        $this->assertSame("test=42; Expires=$formattedExpire; Max-Age=3600; Path=/; Secure; HttpOnly; SameSite=Lax", $this->getCookieHeader($cookie));
+        $this->assertSame(
+            "test=42; Expires=$formattedExpire; Max-Age=3600; Path=/; Secure; HttpOnly; SameSite=Lax",
+            $this->getCookieHeader($cookie)
+        );
     }
 
     public function testExpire(): void
@@ -81,18 +116,24 @@ final class CookieTest extends TestCase
 
     public function testNegativeInterval(): void
     {
-        $formattedExpire = (new \DateTimeImmutable())->setTimestamp(time() - 3600)->format(\DateTimeInterface::RFC7231);
-        $negativeInterval = new \DateInterval('PT3600S');
+        $formattedExpire = (new DateTimeImmutable())->setTimestamp(time() - 3600)->format(\DateTimeInterface::RFC7231);
+        $negativeInterval = new DateInterval('PT3600S');
         $negativeInterval->invert = 1;
         $cookie = (new Cookie('test', '42'))->withMaxAge($negativeInterval);
 
-        $this->assertSame("test=42; Expires=$formattedExpire; Max-Age=-3600; Path=/; Secure; HttpOnly; SameSite=Lax", $this->getCookieHeader($cookie));
+        $this->assertSame(
+            "test=42; Expires=$formattedExpire; Max-Age=-3600; Path=/; Secure; HttpOnly; SameSite=Lax",
+            $this->getCookieHeader($cookie)
+        );
     }
 
     public function testWithDomain(): void
     {
         $cookie = (new Cookie('test', '42'))->withDomain('yiiframework.com');
-        $this->assertSame('test=42; Domain=yiiframework.com; Path=/; Secure; HttpOnly; SameSite=Lax', $this->getCookieHeader($cookie));
+        $this->assertSame(
+            'test=42; Domain=yiiframework.com; Path=/; Secure; HttpOnly; SameSite=Lax',
+            $this->getCookieHeader($cookie)
+        );
     }
 
     public function testExpireWhenBrowserIsClosed(): void
@@ -109,7 +150,7 @@ final class CookieTest extends TestCase
 
     public function testInvalidPath(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         (new Cookie('test', '42'))->withPath(';invalid');
     }
 
@@ -133,7 +174,7 @@ final class CookieTest extends TestCase
 
     public function testInvalidSameSite(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         (new Cookie('test', '42'))->withSameSite('invalid');
     }
 
@@ -145,8 +186,8 @@ final class CookieTest extends TestCase
 
     public function fromCookieStringDataProvider(): array
     {
-        $maxAgeDate = new \DateTimeImmutable('+60 minutes');
-        $expireDate = new \DateTimeImmutable('2012/12/7 10:00 UTC+0');
+        $maxAgeDate = new DateTimeImmutable('+60 minutes');
+        $expireDate = new DateTimeImmutable('2012/12/7 10:00 UTC+0');
 
         return [
             [
@@ -183,7 +224,7 @@ final class CookieTest extends TestCase
                 new Cookie(
                     'sessionId',
                     'e8bb43229de9',
-                    new \DateTimeImmutable(),
+                    new DateTimeImmutable(),
                     'foo.example.com=test',
                     null,
                     false,
@@ -203,10 +244,17 @@ final class CookieTest extends TestCase
         $this->assertSame((string)$cookie, (string)$cookie2);
     }
 
+    public function testFromCookieStringWithEmptyString(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Cookie string must have at least name.');
+        Cookie::fromCookieString('');
+    }
+
     public function testFromCookieStringWithInvalidString(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
-        Cookie::fromCookieString('');
+        $this->expectException(InvalidArgumentException::class);
+        Cookie::fromCookieString('  ;  ');
     }
 
     public function testGetters(): void
@@ -224,7 +272,7 @@ final class CookieTest extends TestCase
         $cookie = $cookie->withValue('testValue');
         $this->assertEquals('testValue', $cookie->getValue());
 
-        $expiry = new \DateTimeImmutable();
+        $expiry = new DateTimeImmutable();
         $cookie = $cookie->withExpires($expiry);
         $this->assertEquals($expiry->getTimestamp(), $cookie->getExpires()->getTimestamp());
 
@@ -246,7 +294,7 @@ final class CookieTest extends TestCase
 
     public function testImmutability(): void
     {
-        $expires = new \DateTime();
+        $expires = new DateTime();
         $original = new Cookie('test', 'value', $expires);
         $withExpires = $original->withExpires($expires);
         $expires->setDate(2000, 12, 7);
@@ -257,7 +305,7 @@ final class CookieTest extends TestCase
 
         $this->assertNotSame($original, $original->withDomain('test'));
         $this->assertNotSame($original, $original->withHttpOnly(true));
-        $this->assertNotSame($original, $original->withMaxAge(new \DateInterval('P1D')));
+        $this->assertNotSame($original, $original->withMaxAge(new DateInterval('P1D')));
         $this->assertNotSame($original, $original->withPath('test'));
         $this->assertNotSame($original, $original->withSameSite(Cookie::SAME_SITE_LAX));
         $this->assertNotSame($original, $original->withSecure(true));
@@ -265,4 +313,13 @@ final class CookieTest extends TestCase
         $this->assertNotSame($original, $original->expire());
         $this->assertNotSame($original, $original->expireWhenBrowserIsClosed());
     }
+}
+
+namespace Yiisoft\Cookies;
+
+use Yiisoft\Cookies\Tests\CookieTest;
+
+function time(): int
+{
+    return CookieTest::$timeResult ?? \time();
 }
