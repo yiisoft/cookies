@@ -559,10 +559,7 @@ final class Cookie
     }
 
     /**
-     * @param string $attribute
      * @psalm-return non-empty-list<null|string>
-     *
-     * @return array
      */
     private static function splitCookieAttribute(string $attribute): array
     {
