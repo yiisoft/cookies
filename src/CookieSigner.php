@@ -14,7 +14,7 @@ use function strpos;
 use function substr;
 
 /**
- * A CookieSigner signs the cookie value and checks whether the signed cookie value has been tampered.
+ * A CookieSigner signs the cookie value and validates whether the signed cookie value has been tampered.
  *
  * @see Cookie
  */
