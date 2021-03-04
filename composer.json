@@ -20,7 +20,8 @@
         "php": "^7.4|^8.0",
         "psr/http-message": "^1.0",
         "psr/http-message-implementation": "1.0",
-        "yiisoft/http": "^1.0"
+        "yiisoft/http": "^1.0",
+        "yiisoft/security": "^1.0"
     },
     "require-dev": {
         "nyholm/psr7": "^1.3",
