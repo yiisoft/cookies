@@ -36,7 +36,7 @@ final class CookieSigner
     private string $key;
 
     /**
-     * @var null|int The length of the generated signature is determined automatically.
+     * @var int|null The length of the generated signature is determined automatically.
      */
     private ?int $signatureLength = null;
 
@@ -102,6 +102,6 @@ final class CookieSigner
         }
 
         $signature = substr($cookie->getValue() . self::SEPARATOR, 0, $separatorPosition);
-        return ($this->signatureLength === strlen($signature) && preg_match('/^[0-9a-f]+$/', $signature));
+        return $this->signatureLength === strlen($signature) && preg_match('/^[0-9a-f]+$/', $signature);
     }
 }
