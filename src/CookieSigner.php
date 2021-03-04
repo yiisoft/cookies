@@ -46,16 +46,15 @@ final class CookieSigner
     }
 
     /**
-     * Returns a new cookie instance with the unsigned cookie value.
+     * Returns a new cookie instance with the clean cookie value or throws an exception if signature is not valid.
      *
      * @param Cookie $cookie The cookie with signed value.
      *
-     * @throws RuntimeException If the cookie value is tampered. If you are not sure that
-     * the value of the cookie file was signed earlier, then first use the {@see validate()} method.
+     * @throws RuntimeException If the cookie value is tampered.
      *
      * @return Cookie The cookie with unsigned value.
      */
-    public function unsign(Cookie $cookie): Cookie
+    public function validate(Cookie $cookie): Cookie
     {
         try {
             $value = $this->mac->getMessage($cookie->getValue(), $this->key);
@@ -64,22 +63,5 @@ final class CookieSigner
         }
 
         return $cookie->withValue($value);
-    }
-
-    /**
-     * Validates whether the cookie value was tampered with.
-     *
-     * @param Cookie $cookie The cookie with signed value for validation.
-     *
-     * @return bool Whether the cookie value was tampered with.
-     */
-    public function validate(Cookie $cookie): bool
-    {
-        try {
-            $this->mac->getMessage($cookie->getValue(), $this->key);
-            return true;
-        } catch (DataIsTamperedException $e) {
-            return false;
-        }
     }
 }
