@@ -20,6 +20,7 @@ The package helps in working with HTTP cookies in a [PSR-7](https://www.php-fig.
 - provides a handy abstraction representing a cookie
 - allows dealing with many cookies at once
 - forms and adds `Set-Cookie` headers to response
+- signs a cookie to prevent its value from being tampered
 
 ## Requirements
 
@@ -61,6 +62,27 @@ Getting request cookies:
 
 ```php
 $cookies = \Yiisoft\Cookies\CookieCollection::fromArray($request->getCookieParams());
+```
+
+Signing a cookie to prevent its value from being tampered:
+
+```php
+$cookie = new \Yiisoft\Cookies\Cookie('identity', 'identityValue');
+
+// The secret key used to sign and validate cookies.
+$key = '0my1xVkjCJnD_q1yr6lUxcAdpDlTMwiU';
+$signer = new \Yiisoft\Cookies\CookieSigner($key);
+
+// Prefixes unique hash based on the value of the cookie.
+$signedCookie = $signer->sign($cookie);
+
+// Validate and get back the cookie with clean value.
+$cookie = $signer->validate($signedCookie);
+
+// Before validation, check if the cookie is signed.
+if ($signer->isSigned($cookie)) {
+    $cookie = $signer->validate($cookie);
+}
 ```
 
 See [Yii guide to cookies](https://github.com/yiisoft/docs/blob/master/guide/en/runtime/cookies.md) for more info.
