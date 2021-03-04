@@ -23,7 +23,6 @@ final class CookieSigner
     private string $key;
 
     /**
-     *
      * @param string The secret key used to sign and validate cookies.
      * @param Mac|null $mac If the null, the Mac instance with the default hashing algorithm will be created.
      */
