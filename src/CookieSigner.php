@@ -101,7 +101,7 @@ final class CookieSigner
             $this->signatureLength = strlen($this->mac->sign('', ''));
         }
 
-        $signature = substr($cookie->getValue() . self::SEPARATOR, 0, $separatorPosition);
+        $signature = substr($cookie->getValue(), 0, $separatorPosition);
         return $this->signatureLength === strlen($signature) && preg_match('/^[0-9a-f]+$/', $signature);
     }
 }
