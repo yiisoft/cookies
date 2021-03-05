@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 namespace Yiisoft\Cookies\Tests;
 
 use PHPUnit\Framework\TestCase;
