@@ -20,7 +20,8 @@ The package helps in working with HTTP cookies in a [PSR-7](https://www.php-fig.
 - provides a handy abstraction representing a cookie
 - allows dealing with many cookies at once
 - forms and adds `Set-Cookie` headers to response
-- signs a cookie to prevent its value from being tampered
+- signs a cookie to prevent its value from being tampered with
+- encrypts a cookie to prevent its value from being tampered with
 
 ## Requirements
 
@@ -64,7 +65,7 @@ Getting request cookies:
 $cookies = \Yiisoft\Cookies\CookieCollection::fromArray($request->getCookieParams());
 ```
 
-Signing a cookie to prevent its value from being tampered:
+Signing a cookie to prevent its value from being tampered with:
 
 ```php
 $cookie = new \Yiisoft\Cookies\Cookie('identity', 'identityValue');
@@ -73,15 +74,36 @@ $cookie = new \Yiisoft\Cookies\Cookie('identity', 'identityValue');
 $key = '0my1xVkjCJnD_q1yr6lUxcAdpDlTMwiU';
 $signer = new \Yiisoft\Cookies\CookieSigner($key);
 
-// Prefixes unique hash based on the value of the cookie.
+// Prefixes unique hash based on the value of the cookie and a secret key.
 $signedCookie = $signer->sign($cookie);
 
-// Validate and get back the cookie with clean value.
+// Validates and get backs the cookie with clean value.
 $cookie = $signer->validate($signedCookie);
 
 // Before validation, check if the cookie is signed.
 if ($signer->isSigned($cookie)) {
     $cookie = $signer->validate($cookie);
+}
+```
+
+Encrypting a cookie to prevent its value from being tampered with:
+
+```php
+$cookie = new \Yiisoft\Cookies\Cookie('identity', 'identityValue');
+
+// The secret key used to sign and validate cookies.
+$key = '0my1xVkjCJnD_q1yr6lUxcAdpDlTMwiU';
+$encryptor = new \Yiisoft\Cookies\CookieEncryptor($key);
+
+// Encrypts cookie value based on the secret key.
+$encryptedCookie = $encryptor->encrypt($cookie);
+
+// Validates, decrypts and get backs the cookie with clean value.
+$cookie = $encryptor->decrypt($encryptedCookie);
+
+// Before decryption, check if the cookie is encrypted.
+if ($encryptor->isEncrypted($cookie)) {
+    $cookie = $encryptor->decrypt($cookie);
 }
 ```
 
