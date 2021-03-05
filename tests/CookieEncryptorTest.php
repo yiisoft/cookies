@@ -13,7 +13,7 @@ use Yiisoft\Security\Crypt;
 
 use function md5;
 
-final class CookieEncryptorTest  extends TestCase
+final class CookieEncryptorTest extends TestCase
 {
     private string $key = 'test-key';
     private string $cookieName = 'test-name';
