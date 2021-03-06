@@ -10,6 +10,7 @@ use Yiisoft\Security\Mac;
 
 use function md5;
 use function strpos;
+use function strlen;
 use function substr;
 
 /**
@@ -91,7 +92,7 @@ final class CookieSigner
      */
     public function isSigned(Cookie $cookie): bool
     {
-        return strpos($cookie->getValue(), $this->prefix($cookie)) === 0;
+        return strlen($cookie->getValue()) > 32 && strpos($cookie->getValue(), $this->prefix($cookie)) === 0;
     }
 
     /**

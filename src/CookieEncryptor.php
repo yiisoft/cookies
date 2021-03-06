@@ -11,6 +11,7 @@ use Yiisoft\Security\Crypt;
 use function md5;
 use function rawurldecode;
 use function rawurlencode;
+use function strlen;
 use function strpos;
 use function substr;
 
@@ -92,7 +93,7 @@ final class CookieEncryptor
      */
     public function isEncrypted(Cookie $cookie): bool
     {
-        return strpos($cookie->getValue(), $this->prefix($cookie)) === 0;
+        return strlen($cookie->getValue()) > 32 && strpos($cookie->getValue(), $this->prefix($cookie)) === 0;
     }
 
     /**
