@@ -8,8 +8,8 @@ use DateInterval;
 use DateTime;
 use DateTimeImmutable;
 use DateTimeZone;
+use HttpSoft\Message\Response;
 use InvalidArgumentException;
-use Nyholm\Psr7\Response;
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Cookies\Cookie;
 
