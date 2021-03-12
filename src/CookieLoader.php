@@ -43,7 +43,9 @@ final class CookieLoader implements MiddlewareInterface
                 if ($this->signer->isSigned($cookie)) {
                     $signed->add($this->signer->validate($cookie));
                 }
-            } catch (RuntimeException $e) {}
+            } catch (RuntimeException $e) {
+                // Do need to log something in this case?
+            }
         }
 
         if (!$encrypted->isEmpty()) {
