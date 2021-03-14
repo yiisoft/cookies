@@ -161,7 +161,7 @@ final class CookieMiddlewareTest extends TestCase
                     $content .= "{$name}:{$value},";
                 }
 
-                $stream = (new StreamFactory)->createStream(rtrim($content, ','));
+                $stream = (new StreamFactory())->createStream(rtrim($content, ','));
                 $response = (new Response())->withBody($stream);
 
                 foreach ($this->cookies as $cookie) {
