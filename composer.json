@@ -23,7 +23,8 @@
         "psr/http-server-handler": "^1.0",
         "psr/http-server-middleware": "^1.0",
         "yiisoft/http": "^1.0",
-        "yiisoft/security": "^1.0"
+        "yiisoft/security": "^1.0",
+        "yiisoft/strings": "^2.0"
     },
     "require-dev": {
         "httpsoft/http-message": "^1.0",
