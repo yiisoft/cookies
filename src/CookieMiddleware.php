@@ -26,12 +26,12 @@ final class CookieMiddleware implements MiddlewareInterface
     private LoggerInterface $logger;
 
     /**
-     * @var string[] The names of the cookies that need to be encrypted/decrypted.
+     * @var string[] The name patterns of the cookies that need to be encrypted/decrypted.
      */
     private array $encryption = [];
 
     /**
-     * @var string[] The names of the cookies that need to be signed/validated.
+     * @var string[] The name patterns of the cookies that need to be signed/validated.
      */
     private array $signature = [];
 
