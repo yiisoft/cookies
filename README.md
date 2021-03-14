@@ -22,6 +22,7 @@ The package helps in working with HTTP cookies in a [PSR-7](https://www.php-fig.
 - forms and adds `Set-Cookie` headers to response
 - signs a cookie to prevent its value from being tampered with
 - encrypts a cookie to prevent its value from being tampered with
+- provides [PSR-15](https://www.php-fig.org/psr/psr-15/) middleware for encrypting and signing cookie values
 
 ## Requirements
 
@@ -105,6 +106,37 @@ $cookie = $encryptor->decrypt($encryptedCookie);
 if ($encryptor->isEncrypted($cookie)) {
     $cookie = $encryptor->decrypt($cookie);
 }
+```
+
+Using a [PSR-15](https://www.php-fig.org/psr/psr-15/) middleware to encrypt and sign cookie values.
+
+```php
+/**
+ * @var \Psr\Http\Message\ServerRequestInterface $request
+ * @var \Psr\Http\Server\RequestHandlerInterface $handler
+ * @var \Psr\Log\LoggerInterface $logger
+ */
+
+// The secret key used to sign and validate cookies.
+$key = '0my1xVkjCJnD_q1yr6lUxcAdpDlTMwiU';
+$signer = new \Yiisoft\Cookies\CookieSigner($key);
+$encryptor = new \Yiisoft\Cookies\CookieEncryptor($key);
+$cookiesSettings = [
+    'identity' => \Yiisoft\Cookies\CookieMiddleware::ENCRYPT,
+    'session' => \Yiisoft\Cookies\CookieMiddleware::ENCRYPT,
+    'signature*' => \Yiisoft\Cookies\CookieMiddleware::SIGN,
+];
+
+$middleware = new \Yiisoft\Cookies\CookieMiddleware(
+    $logger
+    $encryptor,
+    $signer,
+    $cookiesSettings,
+);
+
+// The cookie parameter values from the request are decrypted/validated.
+// The cookie values are encrypted/signed, and appended to the response.
+$response = $middleware->process($request, $handler);
 ```
 
 See [Yii guide to cookies](https://github.com/yiisoft/docs/blob/master/guide/en/runtime/cookies.md) for more info.
