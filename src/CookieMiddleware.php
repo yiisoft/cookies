@@ -10,6 +10,7 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
+use Yiisoft\Http\Header;
 use Yiisoft\Strings\WildcardPattern;
 
 use function explode;
@@ -21,6 +22,9 @@ use function is_string;
  */
 final class CookieMiddleware implements MiddlewareInterface
 {
+    public const ENCRYPT = 'encrypt';
+    public const SIGN = 'sign';
+
     private CookieEncryptor $encryptor;
     private CookieSigner $signer;
     private LoggerInterface $logger;
@@ -39,26 +43,36 @@ final class CookieMiddleware implements MiddlewareInterface
      * @param LoggerInterface $logger The logger instance.
      * @param CookieEncryptor $encryptor The encryptor instance.
      * @param CookieSigner $signer The signer instance.
-     * @param string[] $namePatterns The array keys are cookie name patterns {@see \Yiisoft\Strings\WildcardPattern},
-     * and values are class names of {@see \Yiisoft\Cookies\CookieEncryptor} or {@see \Yiisoft\Cookies\CookieSigner}.
+     * @param string[] $cookiesSettings The array keys are cookie name patterns
+     * {@see \Yiisoft\Strings\WildcardPattern}, and values are constant values of {@see ENCRYPT} or {@see SIGN}.
+     *
+     * For example:
+     *
+     * ```php
+     * $cookiesSettings = [
+     *     'identity' => CookieMiddleware::ENCRYPT,
+     *     'session' => CookieMiddleware::ENCRYPT,
+     *     'signature*' => CookieMiddleware::SIGN,
+     * ];
+     * ```
      */
     public function __construct(
         LoggerInterface $logger,
         CookieEncryptor $encryptor,
         CookieSigner $signer,
-        array $namePatterns = []
+        array $cookiesSettings = []
     ) {
         $this->logger = $logger;
         $this->encryptor = $encryptor;
         $this->signer = $signer;
 
-        foreach ($namePatterns as $pattern => $class) {
-            if ($class === CookieEncryptor::class) {
+        foreach ($cookiesSettings as $pattern => $class) {
+            if ($class === self::ENCRYPT) {
                 $this->encryption[] = (string) $pattern;
                 continue;
             }
 
-            if ($class === CookieSigner::class) {
+            if ($class === self::SIGN) {
                 $this->signature[] = (string) $pattern;
             }
         }
@@ -94,13 +108,13 @@ final class CookieMiddleware implements MiddlewareInterface
             }
 
             try {
-                if ($this->isSecurity($name, $this->encryption)) {
+                if ($this->match($name, $this->encryption)) {
                     $cookie = $this->encryptor->decrypt(new Cookie($name, $value));
                     $cookieParams[$cookie->getName()] = $cookie->getValue();
                     continue;
                 }
 
-                if ($this->isSecurity($name, $this->signature)) {
+                if ($this->match($name, $this->signature)) {
                     $cookie = $this->signer->validate(new Cookie($name, $value));
                     $cookieParams[$cookie->getName()] = $cookie->getValue();
                     continue;
@@ -131,10 +145,10 @@ final class CookieMiddleware implements MiddlewareInterface
         $changed = false;
         $headers = [];
 
-        foreach ($response->getHeader('Set-Cookie') as $key => $header) {
+        foreach ($response->getHeader(Header::SET_COOKIE) as $key => $header) {
             [$name] = explode('=', $header, 2);
 
-            if ($this->isSecurity($name, $this->encryption)) {
+            if ($this->match($name, $this->encryption)) {
                 $cookie = Cookie::fromCookieString($header);
                 $cookie = $this->encryptor->isEncrypted($cookie) ? $cookie : $this->encryptor->encrypt($cookie);
                 $headers[$key] = (string) $cookie;
@@ -142,7 +156,7 @@ final class CookieMiddleware implements MiddlewareInterface
                 continue;
             }
 
-            if ($this->isSecurity($name, $this->signature)) {
+            if ($this->match($name, $this->signature)) {
                 $cookie = Cookie::fromCookieString($header);
                 $cookie = $this->signer->isSigned($cookie) ? $cookie : $this->signer->sign($cookie);
                 $headers[$key] = (string) $cookie;
@@ -157,10 +171,10 @@ final class CookieMiddleware implements MiddlewareInterface
             return $response;
         }
 
-        $response = $response->withoutHeader('Set-Cookie');
+        $response = $response->withoutHeader(Header::SET_COOKIE);
 
         foreach ($headers as $header) {
-            $response = $response->withAddedHeader('Set-Cookie', $header);
+            $response = $response->withAddedHeader(Header::SET_COOKIE, $header);
         }
 
         return $response;
@@ -174,7 +188,7 @@ final class CookieMiddleware implements MiddlewareInterface
      *
      * @return bool Whether the cookie name matches the set cookie name patterns.
      */
-    public function isSecurity(string $name, array $patterns): bool
+    private function match(string $name, array $patterns): bool
     {
         foreach ($patterns as $pattern) {
             $wildcard = new WildcardPattern($pattern);
