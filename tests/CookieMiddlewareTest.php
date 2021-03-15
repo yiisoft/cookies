@@ -11,13 +11,11 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use ReflectionClass;
 use Yiisoft\Cookies\Cookie;
 use Yiisoft\Cookies\CookieEncryptor;
 use Yiisoft\Cookies\CookieMiddleware;
 use Yiisoft\Cookies\CookieSigner;
-use Yiisoft\Log\Logger;
-use Yiisoft\Log\Message;
+use Yiisoft\Test\Support\Log\SimpleLogger;
 
 use function rtrim;
 
@@ -27,11 +25,13 @@ final class CookieMiddlewareTest extends TestCase
 
     private CookieEncryptor $encryptor;
     private CookieSigner $signer;
+    private SimpleLogger $logger;
 
     protected function setUp(): void
     {
         $this->encryptor = new CookieEncryptor(self::SECRET_KEY);
         $this->signer = new CookieSigner(self::SECRET_KEY);
+        $this->logger = new SimpleLogger();
     }
 
     public function testProcess(): void
@@ -56,7 +56,7 @@ final class CookieMiddlewareTest extends TestCase
         $this->assertTrue($this->signer->isSigned(Cookie::fromCookieString($response->getHeader('set-cookie')[1])));
         $this->assertSame((string) $signed, $response->getHeader('set-cookie')[1]);
         $this->assertSame('name:value,encrypted:value,signed:value', $content);
-        $this->assertEmpty($this->getLogMessages($middleware));
+        $this->assertEmpty($this->logger->getMessages());
     }
 
     public function testProcessWithAlreadyEncodingResponseHeaderValues(): void
@@ -77,7 +77,7 @@ final class CookieMiddlewareTest extends TestCase
 
         $this->assertSame([(string) $encrypted, (string) $signed], $response->getHeader('set-cookie'));
         $this->assertSame('name:value,encrypted:value,signed:value', $content);
-        $this->assertEmpty($this->getLogMessages($middleware));
+        $this->assertEmpty($this->logger->getMessages());
     }
 
     public function testProcessWithNamePatternsIsEmpty(): void
@@ -90,7 +90,7 @@ final class CookieMiddlewareTest extends TestCase
 
         $this->assertSame([(string) $cookie], $response->getHeader('set-cookie'));
         $this->assertSame('name:value', $content);
-        $this->assertEmpty($this->getLogMessages($middleware));
+        $this->assertEmpty($this->logger->getMessages());
     }
 
     public function testProcessWithNamePatternsAreMissingInRequest(): void
@@ -103,7 +103,7 @@ final class CookieMiddlewareTest extends TestCase
 
         $this->assertSame([(string) $cookie], $response->getHeader('set-cookie'));
         $this->assertSame('name:value', $content);
-        $this->assertEmpty($this->getLogMessages($middleware));
+        $this->assertEmpty($this->logger->getMessages());
     }
 
     public function testProcessWithCookieParamsAndNamePatternsIsEmpty(): void
@@ -114,7 +114,7 @@ final class CookieMiddlewareTest extends TestCase
 
         $this->assertSame([], $response->getHeader('set-cookie'));
         $this->assertSame('', $content);
-        $this->assertEmpty($this->getLogMessages($middleware));
+        $this->assertEmpty($this->logger->getMessages());
     }
 
     public function testProcessWithCookieValueIsTamperedWith(): void
@@ -129,13 +129,13 @@ final class CookieMiddlewareTest extends TestCase
         $this->assertSame('', $content);
         $this->assertSame(
             'The "name" cookie value was tampered with.',
-            $this->getLogMessages($middleware)[0]->message(),
+            $this->logger->getMessages()[0]['message'],
         );
     }
 
     private function createCookieMiddleware(array $patterns = []): CookieMiddleware
     {
-        return new CookieMiddleware(new Logger(), $this->encryptor, $this->signer, $patterns);
+        return new CookieMiddleware($this->logger, $this->encryptor, $this->signer, $patterns);
     }
 
     private function createServerRequest(array $cookieParams = []): ServerRequestInterface
@@ -171,27 +171,5 @@ final class CookieMiddlewareTest extends TestCase
                 return $response;
             }
         };
-    }
-
-    /**
-     * @param CookieMiddleware $middleware
-     *
-     * @return Message[]
-     */
-    private function getLogMessages(object $middleware): array
-    {
-        $reflection = new ReflectionClass($middleware);
-        $property = $reflection->getProperty('logger');
-        $property->setAccessible(true);
-        $logger = $property->getValue($middleware);
-        $property->setAccessible(false);
-
-        $reflection = new ReflectionClass($logger);
-        $property = $reflection->getProperty('messages');
-        $property->setAccessible(true);
-        $messages = $property->getValue($logger);
-        $property->setAccessible(false);
-
-        return $messages;
     }
 }
