@@ -51,8 +51,8 @@ final class CookieMiddleware implements MiddlewareInterface
      * ```php
      * $cookiesSettings = [
      *     'identity' => CookieMiddleware::ENCRYPT,
-     *     'session' => CookieMiddleware::ENCRYPT,
-     *     'signature*' => CookieMiddleware::SIGN,
+     *     'name_[1-9]' => CookieMiddleware::SIGN,
+     *     'prefix*' => CookieMiddleware::SIGN,
      * ];
      * ```
      */

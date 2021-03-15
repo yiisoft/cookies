@@ -121,10 +121,11 @@ Using a [PSR-15](https://www.php-fig.org/psr/psr-15/) middleware to encrypt and 
 $key = '0my1xVkjCJnD_q1yr6lUxcAdpDlTMwiU';
 $signer = new \Yiisoft\Cookies\CookieSigner($key);
 $encryptor = new \Yiisoft\Cookies\CookieEncryptor($key);
+
 $cookiesSettings = [
     'identity' => \Yiisoft\Cookies\CookieMiddleware::ENCRYPT,
-    'session' => \Yiisoft\Cookies\CookieMiddleware::ENCRYPT,
-    'signature*' => \Yiisoft\Cookies\CookieMiddleware::SIGN,
+    'name_[1-9]' => \Yiisoft\Cookies\CookieMiddleware::SIGN,
+    'prefix*' => \Yiisoft\Cookies\CookieMiddleware::SIGN,
 ];
 
 $middleware = new \Yiisoft\Cookies\CookieMiddleware(
