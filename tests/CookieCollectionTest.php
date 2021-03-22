@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Yiisoft\Cookies\Tests;
 
 use DateTimeImmutable;
+use HttpSoft\Message\Response;
 use InvalidArgumentException;
-use Nyholm\Psr7\Response;
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Cookies\Cookie;
 use Yiisoft\Cookies\CookieCollection;

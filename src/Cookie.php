@@ -10,8 +10,10 @@ use DateTimeInterface;
 use Exception;
 use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
+use Yiisoft\Http\Header;
 
 use function in_array;
+use function is_string;
 
 /**
  * Represents a cookie and also helps adding Set-Cookie header to response in order to set a cookie.
@@ -437,7 +439,7 @@ final class Cookie
      */
     public function addToResponse(ResponseInterface $response): ResponseInterface
     {
-        return $response->withAddedHeader('Set-Cookie', (string)$this);
+        return $response->withAddedHeader(Header::SET_COOKIE, (string) $this);
     }
 
     /**
