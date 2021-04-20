@@ -66,13 +66,13 @@ final class CookieMiddleware implements MiddlewareInterface
         $this->encryptor = $encryptor;
         $this->signer = $signer;
 
-        foreach ($cookiesSettings as $pattern => $class) {
-            if ($class === self::ENCRYPT) {
+        foreach ($cookiesSettings as $pattern => $action) {
+            if ($action === self::ENCRYPT) {
                 $this->encryption[] = (string) $pattern;
                 continue;
             }
 
-            if ($class === self::SIGN) {
+            if ($action === self::SIGN) {
                 $this->signature[] = (string) $pattern;
             }
         }
