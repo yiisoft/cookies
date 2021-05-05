@@ -1,6 +1,11 @@
 # Yii Cookies Change Log
 
 
+## 1.1.1 under development
+
+- no changes in this release.
+
+
 ## 1.1.0 May 05, 2021
 
 - Add #19: Add the `Yiisoft\Cookies\CookieEncryptor` class to encrypt the value of the cookie and verify that it is tampered (devanych)
