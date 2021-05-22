@@ -140,6 +140,13 @@ $middleware = new \Yiisoft\Cookies\CookieMiddleware(
 $response = $middleware->process($request, $handler);
 ```
 
+Create cookie with raw value that will not be encoded:
+
+```php
+$cookie = (new \Yiisoft\Cookies\Cookie('cookieName'))
+    ->withRawValue('ebaKUq90PhiHck_MR7st-E1SxhbYWiTsLo82mCTbNuAh7rgflx5LVsYfJJseyQCrODuVcJkTSYhm1WKte-l5lQ==')
+```
+
 See [Yii guide to cookies](https://github.com/yiisoft/docs/blob/master/guide/en/runtime/cookies.md) for more info.
 
 ## Testing
