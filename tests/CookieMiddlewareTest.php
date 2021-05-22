@@ -11,6 +11,7 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use RuntimeException;
 use Yiisoft\Cookies\Cookie;
 use Yiisoft\Cookies\CookieEncryptor;
 use Yiisoft\Cookies\CookieMiddleware;
@@ -67,6 +68,7 @@ final class CookieMiddlewareTest extends TestCase
             'name' => 'value',
             $encrypted->getName() => $encrypted->getValue(),
             $signed->getName() => $signed->getValue(),
+            'name2' => 'value2',
         ]);
         $middleware = $this->createCookieMiddleware([
             'encrypted' => CookieMiddleware::ENCRYPT,
@@ -76,7 +78,7 @@ final class CookieMiddlewareTest extends TestCase
         $content = $response->getBody()->getContents();
 
         $this->assertSame([(string) $encrypted, (string) $signed], $response->getHeader('set-cookie'));
-        $this->assertSame('name:value,encrypted:value,signed:value', $content);
+        $this->assertSame('name:value,encrypted:value,signed:value,name2:value2', $content);
         $this->assertEmpty($this->logger->getMessages());
     }
 
@@ -131,6 +133,24 @@ final class CookieMiddlewareTest extends TestCase
             'The "name" cookie value was tampered with.',
             $this->logger->getMessages()[0]['message'],
         );
+        $this->assertArrayHasKey('exception', $this->logger->getMessages()[0]['context']);
+        $this->assertInstanceOf(
+            RuntimeException::class,
+            $this->logger->getMessages()[0]['context']['exception']
+        );
+    }
+
+    public function testProcessWithNotStringCookieParams(): void
+    {
+        $request = $this->createServerRequest([
+            'test' => '42',
+            7 => 'hello',
+            'world' => 42,
+        ]);
+        $middleware = $this->createCookieMiddleware();
+        $response = $middleware->process($request, $this->createRequestHandler());
+
+        $this->assertSame('test:42', $response->getBody()->getContents());
     }
 
     private function createCookieMiddleware(array $patterns = []): CookieMiddleware
