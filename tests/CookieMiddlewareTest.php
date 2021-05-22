@@ -133,6 +133,19 @@ final class CookieMiddlewareTest extends TestCase
         );
     }
 
+    public function testProcessWithNotStringCookieParams(): void
+    {
+        $request = $this->createServerRequest([
+            'test' => '42',
+            7 => 'hello',
+            'world' => 42,
+        ]);
+        $middleware = $this->createCookieMiddleware();
+        $response = $middleware->process($request, $this->createRequestHandler());
+
+        $this->assertSame('test:42', $response->getBody()->getContents());
+    }
+
     private function createCookieMiddleware(array $patterns = []): CookieMiddleware
     {
         return new CookieMiddleware($this->logger, $this->encryptor, $this->signer, $patterns);
