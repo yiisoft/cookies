@@ -62,10 +62,10 @@ final class CookieEncryptorTest extends TestCase
     public function invalidDecryptDataProvider(): array
     {
         return [
-            'empty-value' => [''],
-            'not-encrypted-value' => ['value'],
-            'tampered-value' => [$this->encode('value') . '.'],
-            'signature-without-prefix' => [$this->encode('value', false)],
+            'empty-value' => ['', 'The "' . $this->cookieName . '" cookie value is not validly encrypted.'],
+            'not-encrypted-value' => ['value', 'The "' . $this->cookieName . '" cookie value is not validly encrypted.'],
+            'tampered-value' => [$this->encode('value') . '.', 'The "' . $this->cookieName . '" cookie value was tampered with.'],
+            'signature-without-prefix' => [$this->encode('value', false), 'The "' . $this->cookieName . '" cookie value is not validly encrypted.'],
         ];
     }
 
@@ -74,12 +74,13 @@ final class CookieEncryptorTest extends TestCase
      *
      * @param string $value
      */
-    public function testDecryptThrowExceptionForInvalidEncryptedValue(string $value): void
+    public function testDecryptThrowExceptionForInvalidEncryptedValue(string $value, string $message): void
     {
         $cookie = new Cookie($this->cookieName, $value);
         $encryptor = new CookieEncryptor($this->key);
 
         $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage($message);
         $encryptor->decrypt($cookie);
     }
 

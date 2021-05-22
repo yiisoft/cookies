@@ -74,10 +74,10 @@ final class CookieSignerTest extends TestCase
     public function invalidValidateDataProvider(): array
     {
         return [
-            'empty-value' => [''],
-            'not-signed-value' => ['value'],
-            'tampered-value' => [$this->encode('value') . '.'],
-            'signature-without-prefix' => [$this->encode('value', false)],
+            'empty-value' => ['', 'The "' . $this->cookieName . '" cookie value is not validly signed.'],
+            'not-signed-value' => ['value', 'The "' . $this->cookieName . '" cookie value is not validly signed.'],
+            'tampered-value' => [$this->encode('value') . '.', 'The "' . $this->cookieName . '" cookie value was tampered with.'],
+            'signature-without-prefix' => [$this->encode('value', false), 'The "' . $this->cookieName . '" cookie value is not validly signed.'],
         ];
     }
 
@@ -86,12 +86,13 @@ final class CookieSignerTest extends TestCase
      *
      * @param string $value
      */
-    public function testValidateThrowExceptionForInvalidSignedValue(string $value): void
+    public function testValidateThrowExceptionForInvalidSignedValue(string $value, string $message): void
     {
         $cookie = new Cookie($this->cookieName, $value);
         $signer = new CookieSigner($this->key);
 
         $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage($message);
         $signer->validate($cookie);
     }
 
