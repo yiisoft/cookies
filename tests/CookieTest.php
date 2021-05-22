@@ -292,6 +292,14 @@ final class CookieTest extends TestCase
         $this->assertEquals(Cookie::SAME_SITE_LAX, $cookie->getSameSite());
     }
 
+    public function testRawValue(): void
+    {
+        $cookie = (new Cookie('test'))->withRawValue('Q==');
+
+        $this->assertSame('Q==', $cookie->getValue());
+        $this->assertSame('test=Q==; Path=/; Secure; HttpOnly; SameSite=Lax', (string)$cookie);
+    }
+
     public function testImmutability(): void
     {
         $expires = new DateTime();
@@ -310,6 +318,7 @@ final class CookieTest extends TestCase
         $this->assertNotSame($original, $original->withSameSite(Cookie::SAME_SITE_LAX));
         $this->assertNotSame($original, $original->withSecure(true));
         $this->assertNotSame($original, $original->withValue('value'));
+        $this->assertNotSame($original, $original->withRawValue('value'));
         $this->assertNotSame($original, $original->expire());
         $this->assertNotSame($original, $original->expireWhenBrowserIsClosed());
     }

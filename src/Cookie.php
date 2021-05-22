@@ -71,6 +71,11 @@ final class Cookie
     private string $value;
 
     /**
+     * @var bool Whether cookie value should be encoded.
+     */
+    private bool $encodeValue;
+
+    /**
      * @var DateTimeInterface|null The maximum lifetime of the cookie.
      * If unspecified, the cookie becomes a session cookie, which will be removed
      * when the client shuts down.
@@ -127,6 +132,7 @@ final class Cookie
      * @param bool|null $secure Whether the client should send back the cookie only over HTTPS connection.
      * @param bool|null $httpOnly Whether the cookie should be accessible only through the HTTP protocol.
      * @param string|null $sameSite Whether the cookie should be available for cross-site requests.
+     * @param bool $encodeValue Whether cookie value should be encoded.
      *
      * @throws InvalidArgumentException When one or more arguments are not valid.
      */
@@ -138,14 +144,16 @@ final class Cookie
         ?string $path = '/',
         ?bool $secure = true,
         ?bool $httpOnly = true,
-        ?string $sameSite = self::SAME_SITE_LAX
+        ?string $sameSite = self::SAME_SITE_LAX,
+        bool $encodeValue = true
     ) {
         if (!preg_match(self::PATTERN_TOKEN, $name)) {
             throw new InvalidArgumentException("The cookie name \"$name\" contains invalid characters or is empty.");
         }
 
         $this->name = $name;
-        $this->setValue($value);
+        $this->value = $value;
+        $this->encodeValue = $encodeValue;
         $this->expires = $expires !== null ? clone $expires : null;
         $this->domain = $domain;
         $this->setPath($path);
@@ -176,7 +184,21 @@ final class Cookie
     public function withValue(string $value): self
     {
         $new = clone $this;
-        $new->setValue($value);
+        $new->value = $value;
+        $new->encodeValue = true;
+        return $new;
+    }
+
+    /**
+     * Creates a cookie copy with a new value that will not be encoded.
+     *
+     * @param $value string Value of the cookie.
+     */
+    public function withRawValue(string $value): self
+    {
+        $new = clone $this;
+        $new->value = $value;
+        $new->encodeValue = false;
         return $new;
     }
 
@@ -188,11 +210,6 @@ final class Cookie
     public function getValue(): string
     {
         return $this->value;
-    }
-
-    private function setValue(string $value): void
-    {
-        $this->value = $value;
     }
 
     /**
@@ -450,7 +467,7 @@ final class Cookie
     public function __toString(): string
     {
         $cookieParts = [
-            $this->name . '=' . urlencode($this->value),
+            $this->name . '=' . ($this->encodeValue ? urlencode($this->value) : $this->value),
         ];
 
         if ($this->expires !== null) {

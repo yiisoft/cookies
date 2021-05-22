@@ -3,7 +3,8 @@
 
 ## 1.1.1 under development
 
-- no changes in this release.
+- Add #27: Add the parameter `$encodeValue` to the `Cookie` constructor and the `Cookie::withRawValue()` method 
+  that creates a cookie copy with a new value that will not be encoded (vjik)
 
 
 ## 1.1.0 May 05, 2021
