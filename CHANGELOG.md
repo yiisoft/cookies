@@ -1,7 +1,7 @@
 # Yii Cookies Change Log
 
 
-## 1.1.1 under development
+## 1.2.0 May 23, 2021
 
 - Add #27: Add the parameter `$encodeValue` to the `Cookie` constructor and the `Cookie::withRawValue()` method 
   that creates a cookie copy with a new value that will not be encoded (vjik)
