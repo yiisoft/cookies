@@ -1,6 +1,11 @@
 # Yii Cookies Change Log
 
 
+## 1.2.1 under development
+
+- no changes in this release.
+
+
 ## 1.2.0 May 23, 2021
 
 - Add #27: Add the parameter `$encodeValue` to the `Cookie` constructor and the `Cookie::withRawValue()` method 
