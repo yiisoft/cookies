@@ -165,8 +165,8 @@ final class CookieMiddlewareTest extends TestCase
         $this->assertSame(
             'test:42',
             $response
-            ->getBody()
-            ->getContents(),
+                ->getBody()
+                ->getContents(),
         );
     }
 
