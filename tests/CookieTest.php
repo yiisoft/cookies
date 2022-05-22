@@ -274,7 +274,12 @@ final class CookieTest extends TestCase
 
         $expiry = new DateTimeImmutable();
         $cookie = $cookie->withExpires($expiry);
-        $this->assertEquals($expiry->getTimestamp(), $cookie->getExpires()->getTimestamp());
+        $this->assertEquals(
+            $expiry->getTimestamp(),
+            $cookie
+                ->getExpires()
+                ->getTimestamp(),
+        );
 
         $cookie = $cookie->withDomain('yiiframework.com');
         $this->assertEquals('yiiframework.com', $cookie->getDomain());
@@ -307,9 +312,19 @@ final class CookieTest extends TestCase
         $withExpires = $original->withExpires($expires);
         $expires->setDate(2000, 12, 7);
 
-        $this->assertNotEquals(2000, $original->getExpires()->format('Y'));
+        $this->assertNotEquals(
+            2000,
+            $original
+                ->getExpires()
+                ->format('Y'),
+        );
         $this->assertNotSame($original, $withExpires);
-        $this->assertNotEquals(2000, $withExpires->getExpires()->format('Y'));
+        $this->assertNotEquals(
+            2000,
+            $withExpires
+                ->getExpires()
+                ->format('Y'),
+        );
 
         $this->assertNotSame($original, $original->withDomain('test'));
         $this->assertNotSame($original, $original->withHttpOnly(true));

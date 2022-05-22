@@ -51,7 +51,9 @@ final class CookieMiddlewareTest extends TestCase
             'signed' => CookieMiddleware::SIGN,
         ]);
         $response = $middleware->process($request, $this->createRequestHandler([$encryption, $signature]));
-        $content = $response->getBody()->getContents();
+        $content = $response
+            ->getBody()
+            ->getContents();
 
         $this->assertTrue($this->encryptor->isEncrypted(Cookie::fromCookieString($response->getHeader('set-cookie')[0])));
         $this->assertTrue($this->signer->isSigned(Cookie::fromCookieString($response->getHeader('set-cookie')[1])));
@@ -75,7 +77,9 @@ final class CookieMiddlewareTest extends TestCase
             'signed' => CookieMiddleware::SIGN,
         ]);
         $response = $middleware->process($request, $this->createRequestHandler([$encrypted, $signed]));
-        $content = $response->getBody()->getContents();
+        $content = $response
+            ->getBody()
+            ->getContents();
 
         $this->assertSame([(string) $encrypted, (string) $signed], $response->getHeader('set-cookie'));
         $this->assertSame('name:value,encrypted:value,signed:value,name2:value2', $content);
@@ -88,7 +92,9 @@ final class CookieMiddlewareTest extends TestCase
         $request = $this->createServerRequest([$cookie->getName() => $cookie->getValue()]);
         $middleware = $this->createCookieMiddleware();
         $response = $middleware->process($request, $this->createRequestHandler([$cookie]));
-        $content = $response->getBody()->getContents();
+        $content = $response
+            ->getBody()
+            ->getContents();
 
         $this->assertSame([(string) $cookie], $response->getHeader('set-cookie'));
         $this->assertSame('name:value', $content);
@@ -101,7 +107,9 @@ final class CookieMiddlewareTest extends TestCase
         $request = $this->createServerRequest([$cookie->getName() => $cookie->getValue()]);
         $middleware = $this->createCookieMiddleware(['encrypted' => CookieMiddleware::ENCRYPT]);
         $response = $middleware->process($request, $this->createRequestHandler([$cookie]));
-        $content = $response->getBody()->getContents();
+        $content = $response
+            ->getBody()
+            ->getContents();
 
         $this->assertSame([(string) $cookie], $response->getHeader('set-cookie'));
         $this->assertSame('name:value', $content);
@@ -112,7 +120,9 @@ final class CookieMiddlewareTest extends TestCase
     {
         $middleware = $this->createCookieMiddleware();
         $response = $middleware->process($this->createServerRequest(), $this->createRequestHandler());
-        $content = $response->getBody()->getContents();
+        $content = $response
+            ->getBody()
+            ->getContents();
 
         $this->assertSame([], $response->getHeader('set-cookie'));
         $this->assertSame('', $content);
@@ -125,7 +135,9 @@ final class CookieMiddlewareTest extends TestCase
         $request = $this->createServerRequest([$cookie->getName() => "{$cookie->getValue()}."]);
         $middleware = $this->createCookieMiddleware(['name' => CookieMiddleware::ENCRYPT]);
         $response = $middleware->process($request, $this->createRequestHandler());
-        $content = $response->getBody()->getContents();
+        $content = $response
+            ->getBody()
+            ->getContents();
 
         $this->assertSame([], $response->getHeader('set-cookie'));
         $this->assertSame('', $content);
@@ -150,7 +162,12 @@ final class CookieMiddlewareTest extends TestCase
         $middleware = $this->createCookieMiddleware();
         $response = $middleware->process($request, $this->createRequestHandler());
 
-        $this->assertSame('test:42', $response->getBody()->getContents());
+        $this->assertSame(
+            'test:42',
+            $response
+                ->getBody()
+                ->getContents(),
+        );
     }
 
     private function createCookieMiddleware(array $patterns = []): CookieMiddleware

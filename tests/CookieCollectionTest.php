@@ -65,7 +65,12 @@ final class CookieCollectionTest extends TestCase
             }
         });
 
-        $this->assertEquals('modifiedTwoValue', $this->collection->get('two')->getValue());
+        $this->assertEquals(
+            'modifiedTwoValue',
+            $this->collection
+                ->get('two')
+                ->getValue()
+        );
     }
 
     public function testArrayAccess(): void
@@ -186,7 +191,11 @@ final class CookieCollectionTest extends TestCase
         $this->collection->add(new Cookie('test'));
         $this->collection->expire('test');
 
-        $this->assertTrue($this->collection->get('test')->isExpired());
+        $this->assertTrue(
+            $this->collection
+                ->get('test')
+                ->isExpired()
+        );
     }
 
     public function testExpireWithNonExistingKey(): void
