@@ -99,7 +99,9 @@ final class CookieTest extends TestCase
 
     public function testWithMaxAge(): void
     {
-        $formattedExpire = (new DateTimeImmutable())->setTimestamp(time() + 3600)->format(\DateTimeInterface::RFC7231);
+        $formattedExpire = (new DateTimeImmutable())
+            ->setTimestamp(time() + 3600)
+            ->format(\DateTimeInterface::RFC7231);
         $cookie = (new Cookie('test', '42'))->withMaxAge(new DateInterval('PT3600S'));
 
         $this->assertSame(
@@ -116,7 +118,9 @@ final class CookieTest extends TestCase
 
     public function testNegativeInterval(): void
     {
-        $formattedExpire = (new DateTimeImmutable())->setTimestamp(time() - 3600)->format(\DateTimeInterface::RFC7231);
+        $formattedExpire = (new DateTimeImmutable())
+            ->setTimestamp(time() - 3600)
+            ->format(\DateTimeInterface::RFC7231);
         $negativeInterval = new DateInterval('PT3600S');
         $negativeInterval->invert = 1;
         $cookie = (new Cookie('test', '42'))->withMaxAge($negativeInterval);
