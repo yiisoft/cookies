@@ -23,7 +23,7 @@
         "psr/http-message-implementation": "1.0",
         "psr/http-server-handler": "^1.0",
         "psr/http-server-middleware": "^1.0",
-        "psr/log": "^1.0|^2.0|^3.0",
+        "psr/log": "^1.1|^2.0|^3.0",
         "yiisoft/http": "^1.2",
         "yiisoft/security": "^1.0",
         "yiisoft/strings": "^2.0"
