@@ -1,6 +1,6 @@
 # Yii Cookies Change Log
 
-## 1.2.1 under development
+## 1.2.1 June 15, 2022
 
 - Chg #31: Update `yiisoft/http` dependency (devanych)
 - Enh #35: Add support for `2.0`, `3.0` versions of `psr/log` (rustamwin)
