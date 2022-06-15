@@ -3,6 +3,7 @@
 ## 1.2.1 under development
 
 - Chg #31: Update `yiisoft/http` dependency (devanych)
+- Enh #35: Add support for `2.0`, `3.0` versions of `psr/log` (rustamwin)
 
 ## 1.2.0 May 23, 2021
 
