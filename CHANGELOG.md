@@ -1,5 +1,9 @@
 # Yii Cookies Change Log
 
+## 1.2.2 under development
+
+- no changes in this release.
+
 ## 1.2.1 June 15, 2022
 
 - Chg #31: Update `yiisoft/http` dependency (devanych)
