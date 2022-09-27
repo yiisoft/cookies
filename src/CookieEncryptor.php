@@ -12,7 +12,6 @@ use function md5;
 use function rawurldecode;
 use function rawurlencode;
 use function strlen;
-use function strpos;
 use function substr;
 
 /**

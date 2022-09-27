@@ -139,7 +139,6 @@ final class Cookie implements \Stringable
      *
      * @param $value string Value of the cookie.
      *
-     *
      * @see $value for more information.
      */
     public function withValue(string $value): self
@@ -173,8 +172,6 @@ final class Cookie implements \Stringable
 
     /**
      * Creates a cookie copy with a new time the cookie expires.
-     *
-     *
      *
      * @see $expires for more information.
      */
@@ -248,8 +245,6 @@ final class Cookie implements \Stringable
 
     /**
      * Creates a cookie copy with a new domain set.
-     *
-     *
      */
     public function withDomain(string $domain): self
     {
@@ -270,7 +265,6 @@ final class Cookie implements \Stringable
      * Creates a cookie copy with a new path set.
      *
      * @param string $path To be set for the cookie.
-     *
      *
      * @see $path for more information.
      */
@@ -320,8 +314,6 @@ final class Cookie implements \Stringable
 
     /**
      * Creates a cookie copy that would be accessible only through the HTTP protocol.
-     *
-     *
      */
     public function withHttpOnly(bool $httpOnly = true): self
     {
@@ -340,8 +332,6 @@ final class Cookie implements \Stringable
 
     /**
      * Creates a cookie copy with SameSite attribute.
-     *
-     *
      */
     public function withSameSite(string $sameSite): self
     {
@@ -379,7 +369,6 @@ final class Cookie implements \Stringable
 
     /**
      * Adds the cookie to the response and returns it.
-     *
      *
      * @return ResponseInterface Response with added cookie.
      */

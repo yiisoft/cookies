@@ -45,9 +45,9 @@ final class CookieCollectionTest extends TestCase
     {
         $this->collection->add(new Cookie('one', 'oneValue'));
         $this->collection->add(new Cookie('two', 'twoValue'));
-        $exists = $this->collection->exists(static fn(Cookie $cookie, string $name) => $name === 'one' && $cookie->getValue() === 'oneValue');
+        $exists = $this->collection->exists(static fn (Cookie $cookie, string $name) => $name === 'one' && $cookie->getValue() === 'oneValue');
         $this->assertTrue($exists);
-        $exists = $this->collection->exists(static fn(Cookie $cookie, string $name) => $name === 'two' && $cookie->getValue() === 'wrongValue');
+        $exists = $this->collection->exists(static fn (Cookie $cookie, string $name) => $name === 'two' && $cookie->getValue() === 'wrongValue');
         $this->assertFalse($exists);
     }
 
