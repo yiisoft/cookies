@@ -29,9 +29,6 @@ final class CookieSignerTest extends TestCase
 
     /**
      * @dataProvider signDataProvider
-     *
-     * @param string $value
-     * @param string $expected
      */
     public function testSign(string $value, string $expected): void
     {
@@ -46,9 +43,6 @@ final class CookieSignerTest extends TestCase
 
     /**
      * @dataProvider signDataProvider
-     *
-     * @param string $expected
-     * @param string $value
      */
     public function testValidate(string $expected, string $value): void
     {
@@ -83,8 +77,6 @@ final class CookieSignerTest extends TestCase
 
     /**
      * @dataProvider invalidValidateDataProvider
-     *
-     * @param string $value
      */
     public function testValidateThrowExceptionForInvalidSignedValue(string $value, string $message): void
     {
@@ -113,9 +105,6 @@ final class CookieSignerTest extends TestCase
 
     /**
      * @dataProvider isSignedDataProvider
-     *
-     * @param string $value
-     * @param bool $isSigned
      */
     public function testIsSigned(string $value, bool $isSigned): void
     {

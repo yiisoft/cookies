@@ -18,7 +18,7 @@ use function is_string;
 /**
  * Represents a cookie and also helps adding Set-Cookie header to response in order to set a cookie.
  */
-final class Cookie
+final class Cookie implements \Stringable
 {
     /**
      * Regular Expression used to validate cookie name.
@@ -66,16 +66,6 @@ final class Cookie
     private string $name;
 
     /**
-     * @var string Value of the cookie.
-     */
-    private string $value;
-
-    /**
-     * @var bool Whether cookie value should be encoded.
-     */
-    private bool $encodeValue;
-
-    /**
      * @var DateTimeInterface|null The maximum lifetime of the cookie.
      * If unspecified, the cookie becomes a session cookie, which will be removed
      * when the client shuts down.
@@ -86,31 +76,10 @@ final class Cookie
     private ?DateTimeInterface $expires = null;
 
     /**
-     * @var string|null Host/domain to which the cookie will be sent.
-     * If omitted, client will default to the host of the current URL, not including subdomains.
-     * Multiple host/domain values are not allowed, but if a domain is specified,
-     * then subdomains are always included.
-     */
-    private ?string $domain = null;
-
-    /**
      * @var string|null The path on the server in which the cookie will be available on.
      * A cookie path can include any US-ASCII characters excluding control characters and semicolon.
      */
     private ?string $path = null;
-
-    /**
-     * @var bool|null Whether cookie should be sent via secure connection.
-     * A secure cookie is only sent to the server when a request is made with the https: scheme.
-     */
-    private ?bool $secure = null;
-
-    /**
-     * @var bool|null Whether the cookie should be accessible only through the HTTP protocol.
-     * By setting this property to true, the cookie will not be accessible by scripting languages,
-     * such as JavaScript, which can effectively help to mitigate attacks against cross-site scripting (XSS).
-     */
-    private ?bool $httpOnly = null;
 
     /**
      * @var string|null Asserts that a cookie must not be sent with cross-origin requests.
@@ -138,34 +107,27 @@ final class Cookie
      */
     public function __construct(
         string $name,
-        string $value = '',
+        private string $value = '',
         ?DateTimeInterface $expires = null,
-        ?string $domain = null,
+        private ?string $domain = null,
         ?string $path = '/',
-        ?bool $secure = true,
-        ?bool $httpOnly = true,
+        private ?bool $secure = true,
+        private ?bool $httpOnly = true,
         ?string $sameSite = self::SAME_SITE_LAX,
-        bool $encodeValue = true
+        private bool $encodeValue = true
     ) {
         if (!preg_match(self::PATTERN_TOKEN, $name)) {
             throw new InvalidArgumentException("The cookie name \"$name\" contains invalid characters or is empty.");
         }
 
         $this->name = $name;
-        $this->value = $value;
-        $this->encodeValue = $encodeValue;
         $this->expires = $expires !== null ? clone $expires : null;
-        $this->domain = $domain;
         $this->setPath($path);
-        $this->secure = $secure;
-        $this->httpOnly = $httpOnly;
         $this->setSameSite($sameSite);
     }
 
     /**
      * Gets the name of the cookie.
-     *
-     * @return string
      */
     public function getName(): string
     {
@@ -176,8 +138,6 @@ final class Cookie
      * Creates a cookie copy with a new value.
      *
      * @param $value string Value of the cookie.
-     *
-     * @return static
      *
      * @see $value for more information.
      */
@@ -204,8 +164,6 @@ final class Cookie
 
     /**
      * Gets the value of the cookie.
-     *
-     * @return string
      */
     public function getValue(): string
     {
@@ -214,10 +172,6 @@ final class Cookie
 
     /**
      * Creates a cookie copy with a new time the cookie expires.
-     *
-     * @param DateTimeInterface $dateTime
-     *
-     * @return static
      *
      * @see $expires for more information.
      */
@@ -231,8 +185,6 @@ final class Cookie
 
     /**
      * Gets the expiry of the cookie.
-     *
-     * @return DateTimeImmutable|null
      */
     public function getExpires(): ?DateTimeImmutable
     {
@@ -262,8 +214,6 @@ final class Cookie
      * If zero or negative interval is passed, the cookie will expire immediately.
      *
      * @param DateInterval $interval Interval until the cookie expires.
-     *
-     * @return static
      */
     public function withMaxAge(DateInterval $interval): self
     {
@@ -274,8 +224,6 @@ final class Cookie
 
     /**
      * Returns modified cookie that will expire immediately.
-     *
-     * @return static
      */
     public function expire(): self
     {
@@ -287,8 +235,6 @@ final class Cookie
     /**
      * Will remove the expiration from the cookie which will convert the cookie
      * to session cookie, which will expire as soon as the browser is closed.
-     *
-     * @return static
      */
     public function expireWhenBrowserIsClosed(): self
     {
@@ -299,10 +245,6 @@ final class Cookie
 
     /**
      * Creates a cookie copy with a new domain set.
-     *
-     * @param string $domain
-     *
-     * @return static
      */
     public function withDomain(string $domain): self
     {
@@ -313,8 +255,6 @@ final class Cookie
 
     /**
      * Gets the domain of the cookie.
-     *
-     * @return string|null
      */
     public function getDomain(): ?string
     {
@@ -325,8 +265,6 @@ final class Cookie
      * Creates a cookie copy with a new path set.
      *
      * @param string $path To be set for the cookie.
-     *
-     * @return static
      *
      * @see $path for more information.
      */
@@ -348,8 +286,6 @@ final class Cookie
 
     /**
      * Gets the path of the cookie.
-     *
-     * @return string|null
      */
     public function getPath(): ?string
     {
@@ -360,8 +296,6 @@ final class Cookie
      * Creates a cookie copy by making it secure or insecure.
      *
      * @param bool $secure Whether the cookie must be secure.
-     *
-     * @return static
      */
     public function withSecure(bool $secure = true): self
     {
@@ -372,8 +306,6 @@ final class Cookie
 
     /**
      * Whether the cookie is secure.
-     *
-     * @return bool
      */
     public function isSecure(): bool
     {
@@ -382,10 +314,6 @@ final class Cookie
 
     /**
      * Creates a cookie copy that would be accessible only through the HTTP protocol.
-     *
-     * @param bool $httpOnly
-     *
-     * @return static
      */
     public function withHttpOnly(bool $httpOnly = true): self
     {
@@ -396,8 +324,6 @@ final class Cookie
 
     /**
      * Whether the cookie can be accessed only through the HTTP protocol.
-     *
-     * @return bool
      */
     public function isHttpOnly(): bool
     {
@@ -406,10 +332,6 @@ final class Cookie
 
     /**
      * Creates a cookie copy with SameSite attribute.
-     *
-     * @param string $sameSite
-     *
-     * @return static
      */
     public function withSameSite(string $sameSite): self
     {
@@ -439,8 +361,6 @@ final class Cookie
 
     /**
      * Gets the SameSite attribute.
-     *
-     * @return string|null
      */
     public function getSameSite(): ?string
     {
@@ -449,8 +369,6 @@ final class Cookie
 
     /**
      * Adds the cookie to the response and returns it.
-     *
-     * @param ResponseInterface $response
      *
      * @return ResponseInterface Response with added cookie.
      */
@@ -504,8 +422,6 @@ final class Cookie
      * @param string $string `Set-Cookie` header value to parse.
      *
      * @throws Exception
-     *
-     * @return static
      */
     public static function fromCookieString(string $string): self
     {
@@ -583,7 +499,7 @@ final class Cookie
     private static function splitCookieAttribute(string $attribute): array
     {
         $parts = explode('=', $attribute, 2);
-        $parts[1] = $parts[1] ?? null;
+        $parts[1] ??= null;
 
         return $parts;
     }

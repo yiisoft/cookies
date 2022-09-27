@@ -9,7 +9,6 @@ use Yiisoft\Security\DataIsTamperedException;
 use Yiisoft\Security\Mac;
 
 use function md5;
-use function strpos;
 use function strlen;
 use function substr;
 
@@ -26,17 +25,11 @@ final class CookieSigner
     private Mac $mac;
 
     /**
-     * @var string The secret key used to sign and validate cookie values.
-     */
-    private string $key;
-
-    /**
      * @param string $key The secret key used to sign and validate cookie values.
      */
-    public function __construct(string $key)
+    public function __construct(private string $key)
     {
         $this->mac = new Mac();
-        $this->key = $key;
     }
 
     /**
@@ -78,7 +71,7 @@ final class CookieSigner
         try {
             $value = $this->mac->getMessage(substr($cookie->getValue(), 32), $this->key);
             return $cookie->withValue(substr($value, 32));
-        } catch (DataIsTamperedException $e) {
+        } catch (DataIsTamperedException) {
             throw new RuntimeException("The \"{$cookie->getName()}\" cookie value was tampered with.");
         }
     }
@@ -92,7 +85,7 @@ final class CookieSigner
      */
     public function isSigned(Cookie $cookie): bool
     {
-        return strlen($cookie->getValue()) > 32 && strpos($cookie->getValue(), $this->prefix($cookie)) === 0;
+        return strlen($cookie->getValue()) > 32 && str_starts_with($cookie->getValue(), $this->prefix($cookie));
     }
 
     /**

@@ -183,11 +183,8 @@ final class CookieMiddlewareTest extends TestCase
     private function createRequestHandler(array $cookies = []): RequestHandlerInterface
     {
         return new class ($cookies) implements RequestHandlerInterface {
-            private array $cookies;
-
-            public function __construct(array $cookies)
+            public function __construct(private array $cookies)
             {
-                $this->cookies = $cookies;
             }
 
             public function handle(ServerRequestInterface $request): ResponseInterface
