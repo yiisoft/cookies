@@ -28,17 +28,11 @@ final class CookieEncryptor
     private Crypt $crypt;
 
     /**
-     * @var string The secret key used to encrypt and decrypt cookie values.
-     */
-    private string $key;
-
-    /**
      * @param string $key The secret key used to encrypt and decrypt cookie values.
      */
-    public function __construct(string $key)
+    public function __construct(private string $key)
     {
         $this->crypt = new Crypt();
-        $this->key = $key;
     }
 
     /**
@@ -79,7 +73,7 @@ final class CookieEncryptor
         try {
             $value = rawurldecode(substr($cookie->getValue(), 32));
             return $cookie->withValue($this->crypt->decryptByKey($value, $this->key, $cookie->getName()));
-        } catch (AuthenticationException $e) {
+        } catch (AuthenticationException) {
             throw new RuntimeException("The \"{$cookie->getName()}\" cookie value was tampered with.");
         }
     }
@@ -93,7 +87,7 @@ final class CookieEncryptor
      */
     public function isEncrypted(Cookie $cookie): bool
     {
-        return strlen($cookie->getValue()) > 32 && strpos($cookie->getValue(), $this->prefix($cookie)) === 0;
+        return strlen($cookie->getValue()) > 32 && str_starts_with($cookie->getValue(), $this->prefix($cookie));
     }
 
     /**
