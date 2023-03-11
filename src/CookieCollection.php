@@ -20,6 +20,9 @@ use function in_array;
  * A CookieCollection helps to work with many cookies at once and to read / modify response cookies.
  *
  * @see Cookie
+ *
+ * @implements IteratorAggregate<string,Cookie>
+ * @implements ArrayAccess<string,Cookie>
  */
 final class CookieCollection implements IteratorAggregate, ArrayAccess, Countable
 {
