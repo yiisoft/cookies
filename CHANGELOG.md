@@ -2,7 +2,6 @@
 
 ## 1.2.2 under development
 
-- Enh: Add composer require checker into CI
 - Enh #52: Add support for `^2.0` version of `psr/http-message` (@vjik)
 
 ## 1.2.1 June 15, 2022
