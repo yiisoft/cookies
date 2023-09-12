@@ -563,7 +563,7 @@ final class Cookie
     private static function splitCookieAttribute(string $attribute): array
     {
         $parts = explode('=', $attribute, 2);
-        $parts[1] = $parts[1] ?? null;
+        $parts[1] ??= null;
 
         return $parts;
     }
