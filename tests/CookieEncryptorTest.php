@@ -29,6 +29,8 @@ final class CookieEncryptorTest extends TestCase
 
     /**
      * @dataProvider cryptDataProvider
+     *
+     * @param string $value
      */
     public function testEncryptAndDecrypt(string $value): void
     {
@@ -69,6 +71,8 @@ final class CookieEncryptorTest extends TestCase
 
     /**
      * @dataProvider invalidDecryptDataProvider
+     *
+     * @param string $value
      */
     public function testDecryptThrowExceptionForInvalidEncryptedValue(string $value, string $message): void
     {
@@ -97,6 +101,9 @@ final class CookieEncryptorTest extends TestCase
 
     /**
      * @dataProvider isEncryptedDataProvider
+     *
+     * @param string $value
+     * @param bool $isEncrypted
      */
     public function testIsEncrypted(string $value, bool $isEncrypted): void
     {

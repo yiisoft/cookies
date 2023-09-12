@@ -25,6 +25,10 @@ final class CookieMiddleware implements MiddlewareInterface
     public const ENCRYPT = 'encrypt';
     public const SIGN = 'sign';
 
+    private CookieEncryptor $encryptor;
+    private CookieSigner $signer;
+    private LoggerInterface $logger;
+
     /**
      * @var string[] The name patterns of the cookies that need to be encrypted/decrypted.
      */
@@ -53,11 +57,15 @@ final class CookieMiddleware implements MiddlewareInterface
      * ```
      */
     public function __construct(
-        private LoggerInterface $logger,
-        private CookieEncryptor $encryptor,
-        private CookieSigner $signer,
+        LoggerInterface $logger,
+        CookieEncryptor $encryptor,
+        CookieSigner $signer,
         array $cookiesSettings = []
     ) {
+        $this->logger = $logger;
+        $this->encryptor = $encryptor;
+        $this->signer = $signer;
+
         foreach ($cookiesSettings as $pattern => $action) {
             if ($action === self::ENCRYPT) {
                 $this->encryption[] = (string) $pattern;
@@ -87,6 +95,8 @@ final class CookieMiddleware implements MiddlewareInterface
      * parameter will be excluded information about it will be logged.
      *
      * @param ServerRequestInterface $request
+     *
+     * @return ServerRequestInterface
      */
     private function decodeRequestCookieParams(ServerRequestInterface $request): ServerRequestInterface
     {
@@ -127,6 +137,8 @@ final class CookieMiddleware implements MiddlewareInterface
      * be encrypted/signed. Otherwise, the values will not be changed.
      *
      * @param ResponseInterface $response
+     *
+     * @return ResponseInterface
      */
     private function encodeResponseSetCookieHeaders(ResponseInterface $response): ResponseInterface
     {
