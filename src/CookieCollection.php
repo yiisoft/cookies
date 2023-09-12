@@ -20,11 +20,15 @@ use function in_array;
  * A CookieCollection helps to work with many cookies at once and to read / modify response cookies.
  *
  * @see Cookie
+ *
+ * @implements IteratorAggregate<string,Cookie>
+ * @implements ArrayAccess<string,Cookie>
  */
 final class CookieCollection implements IteratorAggregate, ArrayAccess, Countable
 {
     /**
      * @var Cookie[] The cookies in this collection (indexed by the cookie name).
+     *
      * @psalm-var array<string, Cookie>
      */
     private array $cookies = [];
@@ -236,6 +240,7 @@ final class CookieCollection implements IteratorAggregate, ArrayAccess, Countabl
      * Tests for the existence of the cookie that satisfies the given predicate.
      *
      * @param callable $p The predicate.
+     *
      * @psalm-param callable(Cookie, string):bool $p
      *
      * @return bool Whether the predicate is true for at least on cookie.
@@ -278,6 +283,7 @@ final class CookieCollection implements IteratorAggregate, ArrayAccess, Countabl
      * parameter of the callback as reference.
      *
      * @param callable $callback
+     *
      * @psalm-param callable(Cookie, string):void $callback
      */
     public function walk(callable $callback): void

@@ -241,8 +241,7 @@ final class Cookie
         }
 
         // Can be replaced with DateTimeImmutable::createFromInterface in PHP 8.
-        // Returns null on `setTimestamp()` failure.
-        return (new DateTimeImmutable())->setTimestamp($this->expires->getTimestamp()) ?: null;
+        return (new DateTimeImmutable())->setTimestamp($this->expires->getTimestamp());
     }
 
     /**
