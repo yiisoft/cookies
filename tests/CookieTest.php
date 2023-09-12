@@ -76,13 +76,13 @@ final class CookieTest extends TestCase
 
     public function testIsExpiredTrue(): void
     {
-        $cookie = (new Cookie('test', '42'))->withExpires((new DateTimeImmutable('-5 years')));
+        $cookie = (new Cookie('test', '42'))->withExpires(new DateTimeImmutable('-5 years'));
         $this->assertTrue($cookie->isExpired());
     }
 
     public function testIsExpiredFalse(): void
     {
-        $cookie = (new Cookie('test', '42'))->withExpires((new DateTimeImmutable('+5 years')));
+        $cookie = (new Cookie('test', '42'))->withExpires(new DateTimeImmutable('+5 years'));
         $this->assertFalse($cookie->isExpired());
     }
 
