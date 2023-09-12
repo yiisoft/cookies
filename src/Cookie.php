@@ -215,10 +215,6 @@ final class Cookie
     /**
      * Creates a cookie copy with a new time the cookie expires.
      *
-     * @param DateTimeInterface $dateTime
-     *
-     * @return static
-     *
      * @see $expires for more information.
      */
     public function withExpires(DateTimeInterface $dateTime): self
@@ -298,10 +294,6 @@ final class Cookie
 
     /**
      * Creates a cookie copy with a new domain set.
-     *
-     * @param string $domain
-     *
-     * @return static
      */
     public function withDomain(string $domain): self
     {
@@ -324,8 +316,6 @@ final class Cookie
      * Creates a cookie copy with a new path set.
      *
      * @param string $path To be set for the cookie.
-     *
-     * @return static
      *
      * @see $path for more information.
      */
@@ -381,10 +371,6 @@ final class Cookie
 
     /**
      * Creates a cookie copy that would be accessible only through the HTTP protocol.
-     *
-     * @param bool $httpOnly
-     *
-     * @return static
      */
     public function withHttpOnly(bool $httpOnly = true): self
     {
@@ -405,10 +391,6 @@ final class Cookie
 
     /**
      * Creates a cookie copy with SameSite attribute.
-     *
-     * @param string $sameSite
-     *
-     * @return static
      */
     public function withSameSite(string $sameSite): self
     {
@@ -448,8 +430,6 @@ final class Cookie
 
     /**
      * Adds the cookie to the response and returns it.
-     *
-     * @param ResponseInterface $response
      *
      * @return ResponseInterface Response with added cookie.
      */
@@ -582,7 +562,7 @@ final class Cookie
     private static function splitCookieAttribute(string $attribute): array
     {
         $parts = explode('=', $attribute, 2);
-        $parts[1] = $parts[1] ?? null;
+        $parts[1] ??= null;
 
         return $parts;
     }

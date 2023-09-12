@@ -9,7 +9,6 @@ use Yiisoft\Security\DataIsTamperedException;
 use Yiisoft\Security\Mac;
 
 use function md5;
-use function strpos;
 use function strlen;
 use function substr;
 
