@@ -110,6 +110,8 @@ final class CookieCollection implements IteratorAggregate, ArrayAccess, Countabl
      *
      * @param string $name The cookie name.
      * @param Cookie $cookie The cookie to be added.
+     *
+     * @psalm-suppress ParamNameMismatch After drop PHP 7.4 support need to remove this suppress.
      */
     public function offsetSet($name, $cookie): void
     {
