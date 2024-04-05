@@ -1,5 +1,9 @@
 # Yii Cookies Change Log
 
+## 1.2.3 under development
+
+- no changes in this release.
+
 ## 1.2.2 April 05, 2024
 
 - Enh #52: Add support for `^2.0` version of `psr/http-message` (@vjik)
