@@ -150,15 +150,6 @@ See [Yii guide to cookies](https://github.com/yiisoft/docs/blob/master/guide/en/
 
 ## Documentation
 
-- [English](docs/guide/en/......md)
-- [Portuguese - Brazil](docs/guide/pt-BR/......md)
-
-Testing:
-
-- [English](docs/guide/en/testing.md)
-- [Portuguese - Brazil](docs/guide/pt-BR/testing.md)
-- [Internals](docs/internals.md)
-
 - More information can be found in the [Internals.](docs/internals.md)
 
 ## Support
