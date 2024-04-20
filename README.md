@@ -146,9 +146,17 @@ $cookie = (new \Yiisoft\Cookies\Cookie('cookieName'))
     ->withRawValue('ebaKUq90PhiHck_MR7st-E1SxhbYWiTsLo82mCTbNuAh7rgflx5LVsYfJJseyQCrODuVcJkTSYhm1WKte-l5lQ==')
 ```
 
-See [Yii guide to cookies](https://github.com/yiisoft/docs/blob/master/guide/en/runtime/cookies.md) for more info.
-
 ## Documentation
+
+English:
+
+- See [Yii guide to cookies](https://github.com/yiisoft/docs/blob/master/guide/en/runtime/cookies.md) for more info.
+
+Portuguese - Brazil:
+
+- Leia [Yii guide to cookies](https://github.com/yiisoft/docs/blob/master/guide/pt-BR/runtime/cookies.md) para mais informações.
+
+Testing:
 
 - More information can be found in the [Internals.](docs/internals.md)
 
@@ -171,7 +179,7 @@ You may also check out other [Yii Community Resources](https://www.yiiframework.
 
 ## License
 
-The Yii Access is free software. It is released under the terms of the BSD License.
+The Yii Cookies is free software. It is released under the terms of the BSD License.
 Please see [`LICENSE`](./LICENSE.md) for more information.
 
 Maintained by [Yii Software](https://www.yiiframework.com/).
