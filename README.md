@@ -148,17 +148,9 @@ $cookie = (new \Yiisoft\Cookies\Cookie('cookieName'))
 
 ## Documentation
 
-English:
-
-- See [Yii guide to cookies](https://github.com/yiisoft/docs/blob/master/guide/en/runtime/cookies.md) for more info.
-
-Portuguese - Brazil:
-
-- Leia [Yii guide to cookies](https://github.com/yiisoft/docs/blob/master/guide/pt-BR/runtime/cookies.md) para mais informações.
-
-Testing:
-
-- More information can be found in the [Internals.](docs/internals.md)
+- See [Yii guide to cookies](https://github.com/yiisoft/docs/blob/master/guide/en/runtime/cookies.md) for more info
+- Leia [Yii guide to cookies](https://github.com/yiisoft/docs/blob/master/guide/pt-BR/runtime/cookies.md) para mais informações
+- [Internals](docs/internals.md)
 
 ## Support
 
