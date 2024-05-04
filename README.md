@@ -29,7 +29,7 @@ The package helps in working with HTTP cookies in a [PSR-7](https://www.php-fig.
 
 ## Installation
 
-The package could be installed with composer:
+The package could be installed via [composer](https://getcomposer.org/download/)
 
 ```shell
 composer require yiisoft/cookies --prefer-dist
