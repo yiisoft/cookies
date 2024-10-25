@@ -149,7 +149,7 @@ $cookie = (new \Yiisoft\Cookies\Cookie('cookieName'))
 Work with cookie request collection from any place in you project. Add in config you app in middleware block
 ```php
  'middlewares' => [
-        RequestCookieCollectionMiddleware::class,
+        \Yiisoft\Cookies\RequestCookies\RequestCookiesCollectorMiddleware::class,
         ...
     ],
 ```
@@ -158,21 +158,22 @@ Initial provider in di-web config
 ```php
 return [
     ...,
-    RequestCookieProviderInterface::class => [
-        'class' => RequestCookieProvider::class,
+    \Yiisoft\Cookies\RequestCookies\RequestCookiesProviderInterface::class => [
+        'class' => Yiisoft\Cookies\RequestCookies\RequestCookiesProvider::class,
     ],
 
 ```
 
 Use as dependency in any part of ur code
+
 ```php
 
-use \Yiisoft\Cookies\RequestCookieProviderInterface;
+use Yiisoft\Cookies\RequestCookies\RequestCookiesProviderInterface;
 
 final class MyService
 {
     public function __construct(
-        private RequestCookieProviderInterface $requestCookieProvider
+        private RequestCookiesProviderInterface $requestCookieProvider
     )
     {    
     }

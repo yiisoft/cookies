@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Cookies\Exception;
+namespace Yiisoft\Cookies\RequestCookies\Exception;
 
 use LogicException;
 use Throwable;

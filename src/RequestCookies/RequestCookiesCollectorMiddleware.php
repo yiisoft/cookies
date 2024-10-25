@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Cookies;
+namespace Yiisoft\Cookies\RequestCookies;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -10,14 +10,14 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
 /**
- * Stores cookies request  {@see RequestCookieProviderInterface}.
+ * Stores cookies request  {@see RequestCookiesProviderInterface}.
  * You need to add this into your application middleware stack.
  */
-final class RequestCookieCollectionMiddleware implements MiddlewareInterface
+final class RequestCookiesCollectorMiddleware implements MiddlewareInterface
 {
-    private RequestCookieProviderInterface $cookieProvider;
+    private RequestCookiesProviderInterface $cookieProvider;
 
-    public function __construct(RequestCookieProviderInterface $cookieProvider)
+    public function __construct(RequestCookiesProviderInterface $cookieProvider)
     {
         $this->cookieProvider = $cookieProvider;
     }
@@ -25,10 +25,14 @@ final class RequestCookieCollectionMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $cookies = $this->collectCookies($request);
-        $this->cookieProvider->set(new RequestCookieCollection($cookies));
+        $this->cookieProvider->set(new RequestCookies($cookies));
         return $handler->handle($request);
     }
 
+    /**
+     * @param ServerRequestInterface $request
+     * @return array<string, string>
+     */
     private function collectCookies(ServerRequestInterface $request): array
     {
         $collection = [];
@@ -36,7 +40,7 @@ final class RequestCookieCollectionMiddleware implements MiddlewareInterface
             if (!is_string($name) || !is_string($value)) {
                 continue;
             }
-            $collection[] = (new Cookie($name, $value));
+            $collection[$name] = $value;
         }
         return $collection;
     }

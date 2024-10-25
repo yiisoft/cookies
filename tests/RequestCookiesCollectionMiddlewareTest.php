@@ -4,23 +4,23 @@ declare(strict_types=1);
 
 namespace Yiisoft\Cookies\Tests;
 
-use PHPUnit\Framework\TestCase;
 use HttpSoft\Message\Response;
 use HttpSoft\Message\ServerRequest;
 use HttpSoft\Message\StreamFactory;
+use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Yiisoft\Cookies\RequestCookieCollectionMiddleware;
-use Yiisoft\Cookies\RequestCookieProvider;
+use Yiisoft\Cookies\RequestCookies\RequestCookiesCollectorMiddleware;
+use Yiisoft\Cookies\RequestCookies\RequestCookiesProvider;
 
-class RequestCookieCollectionMiddlewareTest extends TestCase
+class RequestCookiesCollectionMiddlewareTest extends TestCase
 {
-    private RequestCookieProvider $cookieProvider;
+    private RequestCookiesProvider $cookieProvider;
 
     protected function setUp(): void
     {
-        $this->cookieProvider = new RequestCookieProvider();
+        $this->cookieProvider = new RequestCookiesProvider();
     }
 
     public function testProcessHas(): void
@@ -53,16 +53,16 @@ class RequestCookieCollectionMiddlewareTest extends TestCase
         $middleware->process($request, $this->createRequestHandler());
         $collection = $this->cookieProvider->get();
 
-        $this->assertSame('value', $collection->getValue('name'));
+        $this->assertSame('value', $collection->get('name'));
 
-        $this->assertSame('Ru-ru', $collection->getValue('lang'));
+        $this->assertSame('Ru-ru', $collection->get('lang'));
 
-        $this->assertSame('dark', $collection->getValue('theme'));
+        $this->assertSame('dark', $collection->get('theme'));
     }
 
-    private function createCookieMiddleware(): RequestCookieCollectionMiddleware
+    private function createCookieMiddleware(): RequestCookiesCollectorMiddleware
     {
-        return new RequestCookieCollectionMiddleware($this->cookieProvider);
+        return new RequestCookiesCollectorMiddleware($this->cookieProvider);
     }
 
     private function createServerRequest(array $cookieParams = []): ServerRequestInterface
