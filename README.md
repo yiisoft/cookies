@@ -146,6 +146,46 @@ $cookie = (new \Yiisoft\Cookies\Cookie('cookieName'))
     ->withRawValue('ebaKUq90PhiHck_MR7st-E1SxhbYWiTsLo82mCTbNuAh7rgflx5LVsYfJJseyQCrODuVcJkTSYhm1WKte-l5lQ==')
 ```
 
+Work with cookie request collection from any place in you project. Add in config you app in middleware block
+```php
+ 'middlewares' => [
+        \Yiisoft\Cookies\RequestCookies\RequestCookiesCollectorMiddleware::class,
+        ...
+    ],
+```
+
+Initial provider in di-web config
+```php
+return [
+    ...,
+    \Yiisoft\Cookies\RequestCookies\RequestCookiesProviderInterface::class => [
+        'class' => Yiisoft\Cookies\RequestCookies\RequestCookiesProvider::class,
+    ],
+
+```
+
+Use as dependency in any part of ur code
+
+```php
+
+use Yiisoft\Cookies\RequestCookies\RequestCookiesProviderInterface;
+
+final class MyService
+{
+    public function __construct(
+        private RequestCookiesProviderInterface $requestCookieProvider
+    )
+    {    
+    }
+    
+    public function doIt()
+    {
+        $cookieCollection = $this->requestCookieProvider->get();
+        // ...
+    }
+}
+```
+```
 ## Documentation
 
 - [Internals](docs/internals.md)
