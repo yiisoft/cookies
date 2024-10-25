@@ -28,7 +28,7 @@ class RequestCookiesCollectionMiddlewareTest extends TestCase
         $request = $this->createServerRequest([
             'name' => 'value',
             'lang' => 'Ru-ru',
-            'theme' => 'dark'
+            'theme' => 'dark',
         ]);
         $middleware = $this->createCookieMiddleware();
         $middleware->process($request, $this->createRequestHandler());
