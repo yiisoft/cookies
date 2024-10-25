@@ -9,7 +9,6 @@ use Yiisoft\Cookies\RequestCookies\RequestCookies;
 
 final class RequestCookiesCollectionTest extends TestCase
 {
-
     public function testGet(): void
     {
         $collection = new RequestCookies(['key' => 'value']);
