@@ -1,6 +1,6 @@
 # Yii Cookies Change Log
 
-## 1.2.3 under development
+## 1.2.3 April 16, 2025
 
 - Chg #69: Change PHP constraint in `composer.json` to `~7.4.0 || ~8.0.0 || ~8.1.0 || ~8.2.0 || ~8.3.0 || ~8.4.0`
   (@vjik)
