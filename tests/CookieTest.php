@@ -12,6 +12,7 @@ use HttpSoft\Message\Response;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Cookies\Cookie;
+use Yiisoft\Cookies\Tests\Support\StaticClock;
 
 final class CookieTest extends TestCase
 {
@@ -190,7 +191,8 @@ final class CookieTest extends TestCase
 
     public function fromCookieStringDataProvider(): array
     {
-        $maxAgeDate = new DateTimeImmutable('+60 minutes');
+        $clock = new StaticClock(new DateTimeImmutable('2019/12/7 10:05 UTC+0'));
+        $maxAgeDate = $clock->now()->modify('+60 minutes');
         $expireDate = new DateTimeImmutable('2012/12/7 10:00 UTC+0');
 
         return [
@@ -206,7 +208,9 @@ final class CookieTest extends TestCase
                     '/test',
                     true,
                     true,
-                    Cookie::SAME_SITE_STRICT
+                    Cookie::SAME_SITE_STRICT,
+                    true,
+                    $clock
                 ),
             ],
             [
@@ -220,7 +224,9 @@ final class CookieTest extends TestCase
                     null,
                     false,
                     false,
-                    null
+                    null,
+                    true,
+                    $clock
                 ),
             ],
             [
@@ -228,12 +234,14 @@ final class CookieTest extends TestCase
                 new Cookie(
                     'sessionId',
                     'e8bb43229de9',
-                    new DateTimeImmutable(),
+                    $clock->now(),
                     'foo.example.com=test',
                     null,
                     false,
                     false,
-                    null
+                    null,
+                    true,
+                    $clock
                 ),
             ],
         ];
@@ -244,8 +252,11 @@ final class CookieTest extends TestCase
      */
     public function testFromCookieString(string $setCookieString, Cookie $cookie): void
     {
-        $cookie2 = Cookie::fromCookieString($setCookieString);
-        $this->assertSame((string)$cookie, (string)$cookie2);
+        $cookie2 = Cookie::fromCookieString(
+            $setCookieString,
+            new StaticClock(new DateTimeImmutable('2019/12/7 10:05 UTC+0')),
+        );
+        $this->assertSame((string) $cookie, (string) $cookie2);
     }
 
     public function testFromCookieStringWithEmptyString(): void
