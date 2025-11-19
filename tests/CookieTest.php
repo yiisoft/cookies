@@ -64,7 +64,7 @@ final class CookieTest extends TestCase
     {
         $expireDateTime = new DateTime('+1 year');
         $expireDateTime->setTimezone(new DateTimeZone('GMT'));
-        $formattedDateTime = $expireDateTime->format(\DateTimeInterface::RFC7231);
+        $formattedDateTime = $expireDateTime->format(\DateTimeInterface::RFC1123);
         $maxAge = $expireDateTime->getTimestamp() - time();
 
         $cookie = (new Cookie('test', '42'))->withExpires($expireDateTime);
@@ -102,7 +102,7 @@ final class CookieTest extends TestCase
     {
         $formattedExpire = (new DateTimeImmutable())
             ->setTimestamp(time() + 3600)
-            ->format(\DateTimeInterface::RFC7231);
+            ->format(\DateTimeInterface::RFC1123);
         $cookie = (new Cookie('test', '42'))->withMaxAge(new DateInterval('PT3600S'));
 
         $this->assertSame(
@@ -121,7 +121,7 @@ final class CookieTest extends TestCase
     {
         $formattedExpire = (new DateTimeImmutable())
             ->setTimestamp(time() - 3600)
-            ->format(\DateTimeInterface::RFC7231);
+            ->format(\DateTimeInterface::RFC1123);
         $negativeInterval = new DateInterval('PT3600S');
         $negativeInterval->invert = 1;
         $cookie = (new Cookie('test', '42'))->withMaxAge($negativeInterval);
@@ -198,7 +198,7 @@ final class CookieTest extends TestCase
         return [
             [
                 'sessionId=e8bb43229de9; Domain=foo.example.com; '
-                . 'Expires=' . $maxAgeDate->format(\DateTimeInterface::RFC7231) . '; '
+                . 'Expires=' . $maxAgeDate->format(\DateTimeInterface::RFC1123) . '; '
                 . 'Max-Age=3600; WeirdKey; Path=/test; Secure; HttpOnly; SameSite=Strict; ExtraKey',
                 new Cookie(
                     'sessionId',
@@ -215,7 +215,7 @@ final class CookieTest extends TestCase
             ],
             [
                 'sessionId=e8bb43229de9; Domain=foo.example.com=test; '
-                . 'Expires=' . $expireDate->format(\DateTimeInterface::RFC7231) . '; ',
+                . 'Expires=' . $expireDate->format(\DateTimeInterface::RFC1123) . '; ',
                 new Cookie(
                     'sessionId',
                     'e8bb43229de9',
