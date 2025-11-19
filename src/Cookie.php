@@ -455,7 +455,7 @@ final class Cookie
         ];
 
         if ($this->expires !== null) {
-            $cookieParts[] = 'Expires=' . $this->expires->format(DateTimeInterface::RFC7231);
+            $cookieParts[] = 'Expires=' . $this->expires->format(DateTimeInterface::RFC1123);
             $cookieParts[] = 'Max-Age=' . ($this->expires->getTimestamp() - $this->getCurrentTimestamp());
         }
 
