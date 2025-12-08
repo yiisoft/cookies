@@ -2,7 +2,8 @@
 
 ## 1.2.4 under development
 
-- no changes in this release.
+- Enh #75: Add PHP 8.5 support (@vjik)
+- Bug #75: Use RFC1123 instead of RFC7231 for cookie expiration date formatting (@rossaddison)
 
 ## 1.2.3 April 16, 2025
 
