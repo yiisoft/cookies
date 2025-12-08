@@ -1,6 +1,6 @@
 # Yii Cookies Change Log
 
-## 1.2.4 under development
+## 1.2.4 December 08, 2025
 
 - Enh #75: Add PHP 8.5 support (@vjik)
 - Bug #75: Use RFC1123 instead of RFC7231 for cookie expiration date formatting (@rossaddison)
