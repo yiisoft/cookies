@@ -1,5 +1,9 @@
 # Yii Cookies Change Log
 
+## 1.2.5 under development
+
+- no changes in this release.
+
 ## 1.2.4 December 08, 2025
 
 - Enh #75: Add PHP 8.5 support (@vjik)
