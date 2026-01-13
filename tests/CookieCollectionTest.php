@@ -69,7 +69,7 @@ final class CookieCollectionTest extends TestCase
             'modifiedTwoValue',
             $this->collection
                 ->get('two')
-                ->getValue()
+                ->getValue(),
         );
     }
 
@@ -194,7 +194,7 @@ final class CookieCollectionTest extends TestCase
         $this->assertTrue(
             $this->collection
                 ->get('test')
-                ->isExpired()
+                ->isExpired(),
         );
     }
 
@@ -264,7 +264,7 @@ final class CookieCollectionTest extends TestCase
         $this->assertCount(2, $response->getHeader('Set-Cookie'));
         $this->assertEquals(
             'one=oneValue; Path=/; Secure; HttpOnly; SameSite=Lax',
-            $response->getHeader('Set-Cookie')[0]
+            $response->getHeader('Set-Cookie')[0],
         );
     }
 

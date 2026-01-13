@@ -44,7 +44,7 @@ final class CookieMiddleware implements MiddlewareInterface
      * @param CookieEncryptor $encryptor The encryptor instance.
      * @param CookieSigner $signer The signer instance.
      * @param string[] $cookiesSettings The array keys are cookie name patterns
-     * {@see \Yiisoft\Strings\WildcardPattern}, and values are constant values of {@see ENCRYPT} or {@see SIGN}.
+     * {@see WildcardPattern}, and values are constant values of {@see ENCRYPT} or {@see SIGN}.
      *
      * For example:
      *
@@ -184,7 +184,7 @@ final class CookieMiddleware implements MiddlewareInterface
      * Checks whether the cookie name matches the set cookie name patterns.
      *
      * @param string $name The cookie name to check.
-     * @param string[] $patterns The array keys are cookie name patterns {@see \Yiisoft\Strings\WildcardPattern}.
+     * @param string[] $patterns The array keys are cookie name patterns {@see WildcardPattern}.
      *
      * @return bool Whether the cookie name matches the set cookie name patterns.
      */
