@@ -148,7 +148,7 @@ final class CookieMiddlewareTest extends TestCase
         $this->assertArrayHasKey('exception', $this->logger->getMessages()[0]['context']);
         $this->assertInstanceOf(
             RuntimeException::class,
-            $this->logger->getMessages()[0]['context']['exception']
+            $this->logger->getMessages()[0]['context']['exception'],
         );
     }
 

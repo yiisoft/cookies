@@ -13,6 +13,9 @@ use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Cookies\Cookie;
 use Yiisoft\Cookies\Tests\Support\StaticClock;
+use DateTimeInterface;
+
+require __DIR__ . '/mocks/time.php';
 
 final class CookieTest extends TestCase
 {
@@ -27,13 +30,6 @@ final class CookieTest extends TestCase
     {
         self::$timeResult = null;
         parent::setUp();
-    }
-
-    private function getCookieHeader(Cookie $cookie): string
-    {
-        $response = new Response();
-        $response = $cookie->addToResponse($response);
-        return $response->getHeaderLine('Set-Cookie');
     }
 
     public function testInvalidName(): void
@@ -56,7 +52,7 @@ final class CookieTest extends TestCase
 
     public function testValueThatIsEncoded(): void
     {
-        $cookieString = (string)(new Cookie('test'))->withValue(';');
+        $cookieString = (string) (new Cookie('test'))->withValue(';');
         $this->assertSame('test=%3B; Path=/; Secure; HttpOnly; SameSite=Lax', $cookieString);
     }
 
@@ -64,14 +60,14 @@ final class CookieTest extends TestCase
     {
         $expireDateTime = new DateTime('+1 year');
         $expireDateTime->setTimezone(new DateTimeZone('GMT'));
-        $formattedDateTime = $expireDateTime->format(\DateTimeInterface::RFC1123);
+        $formattedDateTime = $expireDateTime->format(DateTimeInterface::RFC1123);
         $maxAge = $expireDateTime->getTimestamp() - time();
 
         $cookie = (new Cookie('test', '42'))->withExpires($expireDateTime);
 
         $this->assertSame(
             "test=42; Expires=$formattedDateTime; Max-Age=$maxAge; Path=/; Secure; HttpOnly; SameSite=Lax",
-            $this->getCookieHeader($cookie)
+            $this->getCookieHeader($cookie),
         );
     }
 
@@ -102,12 +98,12 @@ final class CookieTest extends TestCase
     {
         $formattedExpire = (new DateTimeImmutable())
             ->setTimestamp(time() + 3600)
-            ->format(\DateTimeInterface::RFC1123);
+            ->format(DateTimeInterface::RFC1123);
         $cookie = (new Cookie('test', '42'))->withMaxAge(new DateInterval('PT3600S'));
 
         $this->assertSame(
             "test=42; Expires=$formattedExpire; Max-Age=3600; Path=/; Secure; HttpOnly; SameSite=Lax",
-            $this->getCookieHeader($cookie)
+            $this->getCookieHeader($cookie),
         );
     }
 
@@ -121,14 +117,14 @@ final class CookieTest extends TestCase
     {
         $formattedExpire = (new DateTimeImmutable())
             ->setTimestamp(time() - 3600)
-            ->format(\DateTimeInterface::RFC1123);
+            ->format(DateTimeInterface::RFC1123);
         $negativeInterval = new DateInterval('PT3600S');
         $negativeInterval->invert = 1;
         $cookie = (new Cookie('test', '42'))->withMaxAge($negativeInterval);
 
         $this->assertSame(
             "test=42; Expires=$formattedExpire; Max-Age=-3600; Path=/; Secure; HttpOnly; SameSite=Lax",
-            $this->getCookieHeader($cookie)
+            $this->getCookieHeader($cookie),
         );
     }
 
@@ -137,7 +133,7 @@ final class CookieTest extends TestCase
         $cookie = (new Cookie('test', '42'))->withDomain('yiiframework.com');
         $this->assertSame(
             'test=42; Domain=yiiframework.com; Path=/; Secure; HttpOnly; SameSite=Lax',
-            $this->getCookieHeader($cookie)
+            $this->getCookieHeader($cookie),
         );
     }
 
@@ -198,7 +194,7 @@ final class CookieTest extends TestCase
         return [
             [
                 'sessionId=e8bb43229de9; Domain=foo.example.com; '
-                . 'Expires=' . $maxAgeDate->format(\DateTimeInterface::RFC1123) . '; '
+                . 'Expires=' . $maxAgeDate->format(DateTimeInterface::RFC1123) . '; '
                 . 'Max-Age=3600; WeirdKey; Path=/test; Secure; HttpOnly; SameSite=Strict; ExtraKey',
                 new Cookie(
                     'sessionId',
@@ -210,12 +206,12 @@ final class CookieTest extends TestCase
                     true,
                     Cookie::SAME_SITE_STRICT,
                     true,
-                    $clock
+                    $clock,
                 ),
             ],
             [
                 'sessionId=e8bb43229de9; Domain=foo.example.com=test; '
-                . 'Expires=' . $expireDate->format(\DateTimeInterface::RFC1123) . '; ',
+                . 'Expires=' . $expireDate->format(DateTimeInterface::RFC1123) . '; ',
                 new Cookie(
                     'sessionId',
                     'e8bb43229de9',
@@ -226,7 +222,7 @@ final class CookieTest extends TestCase
                     false,
                     null,
                     true,
-                    $clock
+                    $clock,
                 ),
             ],
             [
@@ -241,7 +237,7 @@ final class CookieTest extends TestCase
                     false,
                     null,
                     true,
-                    $clock
+                    $clock,
                 ),
             ],
         ];
@@ -317,7 +313,7 @@ final class CookieTest extends TestCase
         $cookie = (new Cookie('test'))->withRawValue('Q==');
 
         $this->assertSame('Q==', $cookie->getValue());
-        $this->assertSame('test=Q==; Path=/; Secure; HttpOnly; SameSite=Lax', (string)$cookie);
+        $this->assertSame('test=Q==; Path=/; Secure; HttpOnly; SameSite=Lax', (string) $cookie);
     }
 
     public function testImmutability(): void
@@ -352,13 +348,11 @@ final class CookieTest extends TestCase
         $this->assertNotSame($original, $original->expire());
         $this->assertNotSame($original, $original->expireWhenBrowserIsClosed());
     }
-}
 
-namespace Yiisoft\Cookies;
-
-use Yiisoft\Cookies\Tests\CookieTest;
-
-function time(): int
-{
-    return CookieTest::$timeResult ?? \time();
+    private function getCookieHeader(Cookie $cookie): string
+    {
+        $response = new Response();
+        $response = $cookie->addToResponse($response);
+        return $response->getHeaderLine('Set-Cookie');
+    }
 }

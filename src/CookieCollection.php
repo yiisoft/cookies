@@ -62,7 +62,7 @@ final class CookieCollection implements IteratorAggregate, ArrayAccess, Countabl
 
     /**
      * Returns an iterator for traversing the cookies in the collection.
-     * This method is required by the SPL interface {@see \IteratorAggregate}.
+     * This method is required by the SPL interface {@see IteratorAggregate}.
      * It will be implicitly called when you use `foreach` to traverse the collection.
      *
      * @return ArrayIterator
@@ -74,7 +74,7 @@ final class CookieCollection implements IteratorAggregate, ArrayAccess, Countabl
 
     /**
      * Returns whether there is a cookie with the specified name.
-     * This method is required by the SPL interface {@see \ArrayAccess}.
+     * This method is required by the SPL interface {@see ArrayAccess}.
      * It is implicitly called when you use something like `isset($collection[$name])`.
      * This is equivalent to {@see has()}.
      *
@@ -89,7 +89,7 @@ final class CookieCollection implements IteratorAggregate, ArrayAccess, Countabl
 
     /**
      * Returns the cookie with the specified name.
-     * This method is required by the SPL interface {@see \ArrayAccess}.
+     * This method is required by the SPL interface {@see ArrayAccess}.
      * It is implicitly called when you use something like `$cookie = $collection[$name];`.
      * This is equivalent to {@see get()}.
      *
@@ -104,7 +104,7 @@ final class CookieCollection implements IteratorAggregate, ArrayAccess, Countabl
 
     /**
      * Adds the cookie to the collection.
-     * This method is required by the SPL interface {@see \ArrayAccess}.
+     * This method is required by the SPL interface {@see ArrayAccess}.
      * It is implicitly called when you use something like `$collection[$name] = $cookie;`.
      * This is equivalent to {@see add()}.
      *
@@ -120,7 +120,7 @@ final class CookieCollection implements IteratorAggregate, ArrayAccess, Countabl
 
     /**
      * Removes the named cookie.
-     * This method is required by the SPL interface {@see \ArrayAccess}.
+     * This method is required by the SPL interface {@see ArrayAccess}.
      * It is implicitly called when you use something like `unset($collection[$name])`.
      * This is equivalent to {@see remove()}.
      *
@@ -133,7 +133,7 @@ final class CookieCollection implements IteratorAggregate, ArrayAccess, Countabl
 
     /**
      * Returns the number of cookies in the collection.
-     * This method is required by the SPL {@see \Countable} interface.
+     * This method is required by the SPL {@see Countable} interface.
      * It will be implicitly called when you use `count($collection)`.
      *
      * @return int The number of cookies in the collection.
@@ -344,9 +344,9 @@ final class CookieCollection implements IteratorAggregate, ArrayAccess, Countabl
 
         /** @psalm-var array<string,string> $array */
         return new self(array_map(
-            static fn (string $name, string $value) => new Cookie($name, $value),
+            static fn(string $name, string $value) => new Cookie($name, $value),
             array_keys($array),
-            $array
+            $array,
         ));
     }
 

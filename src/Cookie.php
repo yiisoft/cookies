@@ -22,14 +22,6 @@ use function is_string;
 final class Cookie
 {
     /**
-     * Regular Expression used to validate cookie name.
-     *
-     * @link https://tools.ietf.org/html/rfc6265#section-4.1.1
-     * @link https://tools.ietf.org/html/rfc2616#section-2.2
-     */
-    private const PATTERN_TOKEN = '/^[a-zA-Z0-9!#$%&\' * +\- .^_`|~]+$/';
-
-    /**
      * SameSite policy `Lax` will prevent the cookie from being sent by the browser in all cross-site browsing contexts
      * during CSRF-prone request methods (e.g. POST, PUT, PATCH etc).
      * E.g. a POST request from https://otherdomain.com to https://yourdomain.com will not include the cookie,
@@ -58,6 +50,13 @@ final class Cookie
      * @see $sameSite
      */
     public const SAME_SITE_NONE = 'None';
+    /**
+     * Regular Expression used to validate cookie name.
+     *
+     * @link https://tools.ietf.org/html/rfc6265#section-4.1.1
+     * @link https://tools.ietf.org/html/rfc2616#section-2.2
+     */
+    private const PATTERN_TOKEN = '/^[a-zA-Z0-9!#$%&\' * +\- .^_`|~]+$/';
 
     /**
      * @var string Name of the cookie.
@@ -165,6 +164,45 @@ final class Cookie
         $this->httpOnly = $httpOnly;
         $this->setSameSite($sameSite);
         $this->clock = $clock;
+    }
+
+    /**
+     * Returns the cookie as a header string.
+     *
+     * @return string The cookie header string.
+     */
+    public function __toString(): string
+    {
+        $cookieParts = [
+            $this->name . '=' . ($this->encodeValue ? urlencode($this->value) : $this->value),
+        ];
+
+        if ($this->expires !== null) {
+            $cookieParts[] = 'Expires=' . $this->expires->format(DateTimeInterface::RFC1123);
+            $cookieParts[] = 'Max-Age=' . ($this->expires->getTimestamp() - $this->getCurrentTimestamp());
+        }
+
+        if ($this->domain !== null) {
+            $cookieParts[] = 'Domain=' . $this->domain;
+        }
+
+        if ($this->path !== null) {
+            $cookieParts[] = 'Path=' . $this->path;
+        }
+
+        if ($this->secure) {
+            $cookieParts[] = 'Secure';
+        }
+
+        if ($this->httpOnly) {
+            $cookieParts[] = 'HttpOnly';
+        }
+
+        if ($this->sameSite !== null) {
+            $cookieParts[] = 'SameSite=' . $this->sameSite;
+        }
+
+        return implode('; ', $cookieParts);
     }
 
     /**
@@ -331,15 +369,6 @@ final class Cookie
         return $new;
     }
 
-    private function setPath(?string $path): void
-    {
-        if ($path !== null && preg_match('/[\x00-\x1F\x7F\x3B]/', $path)) {
-            throw new InvalidArgumentException("The cookie path \"$path\" contains invalid characters.");
-        }
-
-        $this->path = $path;
-    }
-
     /**
      * Gets the path of the cookie.
      *
@@ -404,25 +433,6 @@ final class Cookie
         return $new;
     }
 
-    private function setSameSite(?string $sameSite): void
-    {
-        if (
-            $sameSite !== null
-            && !in_array($sameSite, [self::SAME_SITE_LAX, self::SAME_SITE_STRICT, self::SAME_SITE_NONE], true)
-        ) {
-            throw new InvalidArgumentException('sameSite should be one of "Lax", "Strict" or "None".');
-        }
-
-        if ($sameSite === self::SAME_SITE_NONE) {
-            // The "secure" flag is required for cookies that are marked as 'SameSite=None'
-            // so that cross-site cookies can only be accessed over HTTPS
-            // without it cookie will not be available for external access.
-            $this->secure = true;
-        }
-
-        $this->sameSite = $sameSite;
-    }
-
     /**
      * Gets the SameSite attribute.
      *
@@ -441,45 +451,6 @@ final class Cookie
     public function addToResponse(ResponseInterface $response): ResponseInterface
     {
         return $response->withAddedHeader(Header::SET_COOKIE, (string) $this);
-    }
-
-    /**
-     * Returns the cookie as a header string.
-     *
-     * @return string The cookie header string.
-     */
-    public function __toString(): string
-    {
-        $cookieParts = [
-            $this->name . '=' . ($this->encodeValue ? urlencode($this->value) : $this->value),
-        ];
-
-        if ($this->expires !== null) {
-            $cookieParts[] = 'Expires=' . $this->expires->format(DateTimeInterface::RFC1123);
-            $cookieParts[] = 'Max-Age=' . ($this->expires->getTimestamp() - $this->getCurrentTimestamp());
-        }
-
-        if ($this->domain !== null) {
-            $cookieParts[] = 'Domain=' . $this->domain;
-        }
-
-        if ($this->path !== null) {
-            $cookieParts[] = 'Path=' . $this->path;
-        }
-
-        if ($this->secure) {
-            $cookieParts[] = 'Secure';
-        }
-
-        if ($this->httpOnly) {
-            $cookieParts[] = 'HttpOnly';
-        }
-
-        if ($this->sameSite !== null) {
-            $cookieParts[] = 'SameSite=' . $this->sameSite;
-        }
-
-        return implode('; ', $cookieParts);
     }
 
     /**
@@ -562,8 +533,36 @@ final class Cookie
             $params['httpOnly'] ?? null,
             $params['sameSite'] ?? null,
             true,
-            $clock
+            $clock,
         );
+    }
+
+    private function setPath(?string $path): void
+    {
+        if ($path !== null && preg_match('/[\x00-\x1F\x7F\x3B]/', $path)) {
+            throw new InvalidArgumentException("The cookie path \"$path\" contains invalid characters.");
+        }
+
+        $this->path = $path;
+    }
+
+    private function setSameSite(?string $sameSite): void
+    {
+        if (
+            $sameSite !== null
+            && !in_array($sameSite, [self::SAME_SITE_LAX, self::SAME_SITE_STRICT, self::SAME_SITE_NONE], true)
+        ) {
+            throw new InvalidArgumentException('sameSite should be one of "Lax", "Strict" or "None".');
+        }
+
+        if ($sameSite === self::SAME_SITE_NONE) {
+            // The "secure" flag is required for cookies that are marked as 'SameSite=None'
+            // so that cross-site cookies can only be accessed over HTTPS
+            // without it cookie will not be available for external access.
+            $this->secure = true;
+        }
+
+        $this->sameSite = $sameSite;
     }
 
     /**
