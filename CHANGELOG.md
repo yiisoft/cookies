@@ -2,7 +2,7 @@
 
 ## 1.2.5 under development
 
-- no changes in this release.
+- Enh #78: Remove unnecessary files from Composer package (@mspirkov)
 
 ## 1.2.4 December 08, 2025
 
