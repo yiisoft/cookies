@@ -32,6 +32,12 @@ final class CookieTest extends TestCase
         parent::setUp();
     }
 
+    protected function tearDown(): void
+    {
+        self::$timeResult = null;
+        parent::tearDown();
+    }
+
     public function testInvalidName(): void
     {
         $this->expectException(InvalidArgumentException::class);
