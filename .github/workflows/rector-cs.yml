@@ -11,7 +11,7 @@ on:
       - '.php-cs-fixer.dist.php'
 
 permissions:
-  contents: read
+  contents: write # Required by the reusable workflow to push PHP CS Fixer and Rector changes.
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
