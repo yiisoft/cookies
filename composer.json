@@ -29,7 +29,6 @@
     ],
     "require": {
         "php": "7.4.* || 8.0 - 8.5",
-        "psr/clock": "^1.0",
         "psr/http-message": "^1.0 || ^2.0",
         "psr/http-message-implementation": "1.0",
         "psr/http-server-handler": "^1.0",
@@ -44,6 +43,7 @@
         "friendsofphp/php-cs-fixer": "^3.92.5",
         "httpsoft/http-message": "^1.1.6",
         "phpunit/phpunit": "^9.6.22",
+        "psr/clock": "^1.0",
         "rector/rector": "^2.0.11",
         "shipmonk/composer-dependency-analyser": "^1.8",
         "spatie/phpunit-watcher": "^1.23.6",
